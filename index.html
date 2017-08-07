@@ -24,7 +24,7 @@
        * to indicate the path from which you'll be serving, including leading
        * and trailing slashes (e.g., `/my-app/`).
        */
-      window.Polymer = {rootPath: '/'};
+      <!--window.Polymer = {rootPath: '/'};-->
 
     </script>
     <style>
@@ -36,9 +36,39 @@
         font-family: "Open Sans", "Helvetica Neue", sans-serif;
         background-color: #FFDB00;
       }
+      .logo {
+        font-family: "Oneday Condensed", serif;
+        color: #000;
+        font-size: 24px;
+        position: fixed;
+        right: 10px;
+        bottom: 15px;
+        z-index: 2;
+        display: inline-block;
+        width: 55px;
+        height: 55px;
+        line-height: 55px;
+        border-radius: 50%;
+        background: transparent url("/images/logo-bg-mobile.svg") 50% 50% no-repeat;
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+        padding: 0;
+        margin: 0;
+      }
       @media screen and (min-width: 768px) {
         body {
           font-size: 18px;
+        }
+        .logo {
+          font-size: 48px;
+          position: absolute;
+          display: inline-block;
+          width: auto;
+          height:auto;
+          bottom: 29px;
+          right: 20px;
+          background: transparent;
         }
       }
       @media screen and (min-width: 1024px) {
@@ -50,6 +80,7 @@
   </head>
   <body>
     <mishunov-app></mishunov-app>
+    <a href="/" class="logo">DM</a>
 
     <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="/src/mishunov-app.html">
@@ -57,4 +88,5 @@
     <script>
       window.performance && performance.mark && performance.mark('index.html');
     </script>
+  </body>
 </html>

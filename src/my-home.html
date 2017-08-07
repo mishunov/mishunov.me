@@ -2,7 +2,7 @@
 
 <link rel="import" href="shared-styles.html">
 
-<dom-module id=my-frontpage>
+<dom-module id=my-home>
   <template>
     <style include="shared-styles">
       :host {
@@ -25,15 +25,15 @@
      * @customElement
      * @polymer
      */
-    class MyFrontpage extends Polymer.Element {
+    class MyHome extends Polymer.Element {
       static get is() {
-        return 'my-frontpage';
+        return 'my-home';
       }
       static get properties() {
         return {};
       }
     }
 
-    window.customElements.define(MyFrontpage.is, MyFrontpage);
+    window.customElements.define(MyHome.is, MyHome);
   </script>
 </dom-module>
