@@ -1,0 +1,30 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id=my-view404>
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+  </template>
+Ooops. Пичалька
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyView404 extends Polymer.Element {
+      static get is() {
+        return 'my-view404';
+      }
+
+      static get properties() {
+        return {};
+      }
+    }
+
+    window.customElements.define(MyView404.is, MyView404);
+  </script>
+</dom-module>

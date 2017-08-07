@@ -1,0 +1,30 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id=my-writing>
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h1>Writing</h1>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyWriting extends Polymer.Element {
+      static get is() {
+        return 'my-writing';
+      }
+
+      static get properties() {
+        return {};
+      }
+    }
+
+    window.customElements.define(MyWriting.is, MyWriting);
+  </script>
+</dom-module>

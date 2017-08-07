@@ -1,0 +1,45 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id=my-working>
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <p>I have been working with the web since 2001 dealing with pretty much all aspects of the frontend toolset: from generic web design, to CSS development, to building javascript applications (while still breaking CSS and abusing HTML) web performance optimisations and user experience architecture. But no matter what I'm working with in my day-to-day job, getting to the heart of the matter of things and processes is what drives me. Being 2-in-1: an art school graduate and an engineer, I'm passionate about psychology & physics technology & illustrations, history of art & the world history.
+    </p>
+    <p>The stack of the technologies and tools I feel confident with includes but is not limited to:</p>
+    <ul>
+      <li>javascript development (plain javascript, Polymer)</li>
+      <li>CSS development</li>
+      <li>User experience strategies</li>
+      <li>illustrations: not directly front-end, but just wanted you to know ;)</li>
+    </ul>
+    <p>Ideally, I like working with creative projects where I am not bound by technology and projects that make a difference, helping people live easier lives. So, if you think I might be a good fit for your project, just drop me a couple of lines and we'll arrange an informal (or formal if you're into that type of things) chat.</p>
+    <p>Looking forward to hearing from you.</p>
+    <p>
+      --<br>
+      Sincerely yours,<br>
+      Denys Mishunov
+    </p>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyWorking extends Polymer.Element {
+      static get is() {
+        return 'my-working';
+      }
+
+      static get properties() {
+        return {};
+      }
+    }
+
+    window.customElements.define(MyWorking.is, MyWorking);
+  </script>
+</dom-module>

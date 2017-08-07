@@ -1,0 +1,203 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+
+
+<link rel="import" href="my-navigation.html">
+
+<link rel="lazy-import" href="my-frontpage.html">
+<link rel="lazy-import" href="my-working.html">
+<link rel="lazy-import" href="my-writing.html">
+<link rel="lazy-import" href="my-speaking.html">
+<link rel="lazy-import" href="my-view404.html">
+
+<dom-module id="mishunov-app">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        --app-primary-font-color: #000;
+        --app-alt-font-color: #fff;
+        --app-primary-color: #FFDB00;
+        --app-secondary-color: #F1CD00;
+        --app-lime-color: #BEDB39;
+        --app-green-color: #1F8A70;
+        --app-blue-color: #004358;
+
+        background: var(--app-primary-color);
+        color: var(--app-primary-font-color);
+        position: relative;
+        box-sizing: border-box;
+        min-height: 100%;
+        padding-bottom: 129px;
+      }
+
+      footer {
+        font-family: "Oneday Condensed", serif;
+        background: transparent url("/images/footer-mobile.png") bottom right repeat-x;
+        height: 129px;
+        position: absolute;
+        bottom:0;
+        right:0;
+        left: 0;
+        text-align: center;
+        font-size: 1.2em;
+      }
+      footer ul {
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+      }
+      footer li {
+        list-style: none;
+        display: inline-block;
+      }
+      footer a {
+        color: var(--app-primary-font-color);
+        text-decoration: none;
+        text-transform: uppercase;
+        padding: 0 0 0 .3em;
+      }
+      footer li:first-child a {
+        padding-left: 0;
+      }
+      .hide-on-mobile {
+        display: none;
+      }
+      @media screen and (min-width: 768px) {
+        :host {
+          padding-bottom: 218px;
+        }
+        footer {
+          background-image: url("/images/footer.png");
+          height: 218px;
+          font-size: inherit;
+        }
+        footer ul {
+          bottom: 40px;
+        }
+        .hide-on-mobile {
+          display: initial;
+        }
+      }
+    </style>
+
+    <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="[[rootPath]]:page"
+      data="{{routeData}}"
+      tail="{{subroute}}"></app-route>
+
+    <my-navigation selected="[[page]]" role="navigation"></my-navigation>
+
+    <iron-pages
+      selected="[[page]]"
+      attr-for-selected="name"
+      fallback-selection="view404"
+      role="main">
+
+      <my-frontpage name="frontpage"></my-frontpage>
+      <my-working name="working"></my-working>
+      <my-speaking name="speaking"></my-speaking>
+      <my-writing name="writing"></my-writing>
+      <my-view404 name="view404"></my-view404>
+    </iron-pages>
+
+    <footer>
+      <span class="hide-on-mobile">I'm on &middot;</span>
+      <ul>
+        <li><a href="">Twitter</a></li>
+        <li>&middot;<a href="">LinkedIn</a></li>
+        <li>&middot;<a href="">Lanyard</a></li>
+        <li>&middot;<a href="">E-mail</a></li>
+      </ul>
+    </footer>
+
+  </template>
+
+  <script>
+
+    // performance logging
+    window.performance && performance.mark && performance.mark('mishunov-app - before register');
+
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MishunovApp extends Polymer.Element {
+
+      static get is() { return 'mishunov-app'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged'
+          },
+          routeData: Object,
+          subroute: String,
+          // This shouldn't be neccessary, but the Analyzer isn't picking up
+          // Polymer.Element#rootPath
+          rootPath: String
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)'
+        ];
+      }
+
+      constructor() {
+        super();
+        window.performance && performance.mark && performance.mark('mishunov-app.created');
+      }
+
+      ready () {
+        super.ready();
+        this.addEventListener('dom-change', (e)=>this._domChange(e));
+      }
+
+      _routePageChanged(page) {
+        // If no page was found in the route data, page will be an empty string.
+        // Deault to 'frontpage' in that case.
+        this.page = page || 'frontpage';
+      }
+      _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        Polymer.importHref(
+          resolvedPageUrl,
+          null,
+          this._showPage404.bind(this),
+          true);
+      }
+      _showPage404() {
+        debugger;
+        this.page = 'view404';
+      }
+
+      // This is for performance logging only.
+      _domChange(e) {
+        if (window.performance && performance.mark && !this.__loggedDomChange) {
+          let target = e.composedPath()[0];
+          let host = target.getRootNode().host;
+          if (host && host.localName.match(this.page)) {
+            this.__loggedDomChange = true;
+            performance.mark(host.localName + '.domChange');
+          }
+        }
+      }
+    }
+
+    window.customElements.define(MishunovApp.is, MishunovApp);
+  </script>
+</dom-module>

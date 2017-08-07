@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id=my-speaking>
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+    </style>
+    <h1>Speaking</h1>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MySpeaking extends Polymer.Element {
+      static get is() {
+        return 'my-speaking';
+      }
+
+      static get properties() {
+        return {};
+      }
+    }
+
+    window.customElements.define(MySpeaking.is, MySpeaking);
+  </script>
+</dom-module>

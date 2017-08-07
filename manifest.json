@@ -1,0 +1,7 @@
+{
+  "name": "mishunov.me",
+  "short_name": "mishunov.me",
+  "description": "Personal web site of Denys Mishunov",
+  "start_url": "/",
+  "display": "standalone"
+}
