@@ -1,7 +1,26 @@
 {
+  "entrypoint": "index.html",
+  "shell": "src/mishunov-app.html",
+  "sources": [
+    "src/**/*",
+    "data/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "app.yaml",
+    "manifest.json",
+    "bower_components/webcomponentsjs/*"
+  ],
   "lint": {
-    "rules": [
-      "polymer-2"
-    ]
-  }
+    "rules": ["polymer-2-hybrid"]
+  },
+  "builds": [
+    {
+      "preset": "es5-bundled"
+    },
+    {
+      "preset": "es6-unbundled"
+    }
+  ]
 }
