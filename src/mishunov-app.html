@@ -2,13 +2,13 @@
 
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 
 
 <link rel="import" href="my-navigation.html">
+<link rel="import" href="my-footer.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="mishunov-app">
@@ -29,50 +29,10 @@
         min-height: 100%;
         padding-bottom: 130px;
       }
-      footer {
-        font-family: "Oneday Condensed", serif;
-        background: transparent url("/images/footer-mobile.png") bottom right repeat-x;
-        height: 130px;
-        position: absolute;
-        bottom:0;
-        right:0;
-        left: 0;
-        text-align: center;
-        font-size: 1.2em;
-        @apply --layout-horizontal;
-        @apply --layout-end;
-      }
-      footer nav {
-        @apply --layout-flex;
-        margin-bottom: 20px;
-      }
-      footer ul {
-        margin: 0;
-        padding: 0;
-        display: inline-block;
-      }
-      footer li {
-        list-style: none;
-        display: inline-block;
-      }
-      footer a {
-        text-transform: uppercase;
-        padding: 0 0 0 .3em;
-      }
-      footer li:first-child a {
-        padding-left: 0;
-      }
+
       @media screen and (min-width: 768px) {
         :host {
           padding-bottom: 218px;
-        }
-        footer {
-          background-image: url("/images/footer.png");
-          height: 218px;
-          font-size: inherit;
-        }
-        footer nav {
-          margin-bottom: 40px;
         }
       }
     </style>
@@ -101,17 +61,7 @@
       <my-view404 name="view404"></my-view404>
     </iron-pages>
 
-    <footer>
-      <nav>
-        <span class="hide-on-mobile">I'm on &middot;</span>
-        <ul>
-          <li><a href="">Twitter</a></li>
-          <li>&middot;<a href="">LinkedIn</a></li>
-          <li>&middot;<a href="">Lanyard</a></li>
-          <li>&middot;<a href="">E-mail</a></li>
-        </ul>
-      </nav>
-    </footer>
+    <my-footer></my-footer>
 
   </template>
 
