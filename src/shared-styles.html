@@ -14,6 +14,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="shared-styles">
   <template>
     <style>
+      :root {
+        --app-primary-font-color: #000;
+        --app-alt-font-color: #fff;
+        --app-primary-color: #FFDB00;
+        --app-secondary-color: #F1CD00;
+        --app-lime-color: #BEDB39;
+        --app-green-color: #1F8A70;
+        --app-blue-color: #004358;
+      }
       h1, h2, h3, h4 {
         font-family: "Oneday Condensed", serif;
         font-weight: normal;
@@ -29,6 +38,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       h4 {
         font-size: 24px;
+      }
+      a {
+        color: var(--app-primary-font-color);
+        text-decoration: none;
+      }
+      .hide-on-mobile {
+        display: none;
+      }
+      @media screen and (min-width: 768px) {
+        .hide-on-mobile {
+          display: initial;
+        }
       }
     </style>
   </template>

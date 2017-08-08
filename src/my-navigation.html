@@ -1,42 +1,125 @@
 <!-- Load the Polymer.Element base class -->
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="shared-styles.html">
+
 <dom-module id="my-navigation">
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
-        font-family: OpenSans-Bold, "Helvetica Neue", sans-serif;
+        font-family: "Open Sans", "Helvetica Neue", sans-serif;
         text-transform: uppercase;
-        font-weight: bold;
-        font-size: 10px;
         margin: 0 auto;
-        padding-top: 1.4em;
         position: relative;
-        right: -2.3em;
+      }
+      /* :host[centered] {
+        text-align: center;
+      } */
+      .logo {
+        font-family: "Oneday Condensed", serif;
+        font-size: 22px;
+        padding-left: 34px; /* 50px by design - 16px coming from app-to*/
+      }
+      app-header {
+        height: 207px;
+        position: relative;
+        background-color: transparent;
+        background-position: 100% 0;
+        background-repeat: repeat-x;
+      }
+      app-header:after {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;
+        background-size: cover;
+      }
+      iron-selector {
         text-align: right;
       }
-      :host[centered] {
-        text-align: center;
+      iron-selector a {
+        font-weight: bold;
+        display: inline-block;
+        font-size: 10px;
+        padding: 0 1.9em;
+        line-height: 36px;
       }
-      a {
-        text-decoration: none;
-        padding: 0 2.3em;
-        color: var(--app-primary-font-color);
+      app-toolbar {
+        padding: 0;
+        height: 36px;
+        z-index: 2;
+        @apply --layout-end-justified;
+        @apply --layout-end;
       }
+
+      /* Sections */
+      app-header.speaking {
+        background-image: url('/images/Header/mobile/lime.png');
+      }
+      app-header.working {
+        background-image: url('/images/Header/mobile/blue.png');
+      }
+      app-header.writing {
+        background-image: url('/images/Header/mobile/green.png');
+      }
+
+      app-header.working app-toolbar a,
+      app-header.writing app-toolbar a {
+        color: var(--app-alt-font-color);
+      }
+
       @media screen and (min-width: 768px) {
-        :host {
+        iron-selector a {
           font-size: .7em;
+          padding: 0 2.3em;
+          line-height: normal;
+        }
+        app-header {
+          height: 454px;
+        }
+        /* Sections */
+        app-header.speaking {
+          background-image: url('/images/Header/normal/lime.png');
+        }
+        app-header.working {
+          background-image: url('/images/Header/normal/blue.png');
+        }
+        app-header.writing {
+          background-image: url('/images/Header/normal/green.png');
+        }
+        app-header:after {
+          background-image: url('/images/dashed-border.svg');
+        }
+        app-toolbar {
+          height: 47px;
         }
       }
     </style>
 
-    <iron-selector id="nav" selected="[[page]]" attr-for-selected="name" role="navigation">
-      <!--<a name="frontpage" href="[[rootPath]]frontpage">Frontpage</a>-->
-      <a name="working" href="[[rootPath]]working">Working</a>
-      <a name="speaking" href="[[rootPath]]speaking">Speaking</a>
-      <a name="writing" href="[[rootPath]]writing">Writing</a>
-    </iron-selector>
+    <app-header class$="[[page]]" reveal>
+      <app-toolbar>
+        <div class="logo hide-on-mobile" main-title><a href="/" aria-label="Go Home :)">Denys Mishunov</a></div>
+
+        <iron-selector id="nav" selected="[[page]]" attr-for-selected="name" role="navigation">
+          <!--<a name="frontpage" href="[[rootPath]]frontpage">Frontpage</a>-->
+          <a name="working" href="/working">Working</a>
+          <a name="speaking" href="/speaking">Speaking</a>
+          <a name="writing" href="/writing">Writing</a>
+        </iron-selector>
+
+      </app-toolbar>
+    </app-header>
 
   </template>
   <script>
@@ -45,8 +128,8 @@
 
       static get properties() {
         return {
-          selected: String
-        };
+          page: String
+        }
       }
     }
     customElements.define(MyNavigation.is, MyNavigation);
