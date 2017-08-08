@@ -13,27 +13,15 @@
     <style include="shared-styles">
       :host {
         display: block;
-        font-family: "Open Sans", "Helvetica Neue", sans-serif;
-        text-transform: uppercase;
-        margin: 0 auto;
-        position: relative;
-      }
-      /* :host[centered] {
-        text-align: center;
-      } */
-      .logo {
-        font-family: "Oneday Condensed", serif;
-        font-size: 22px;
-        padding-left: 34px; /* 50px by design - 16px coming from app-to*/
-      }
-      app-header {
-        height: 207px;
+        margin: 0;
+        padding: 0;
         position: relative;
         background-color: transparent;
-        background-position: 100% 0;
+        background-position: 100% 100%;
         background-repeat: repeat-x;
+        background-image: url('/images/header-bottom-mobile.png');
       }
-      app-header:after {
+      :host:after {
         content: "";
         display: block;
         position: absolute;
@@ -45,41 +33,150 @@
         background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;
         background-size: cover;
       }
-      iron-selector {
-        text-align: right;
+      :host:before {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 2;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: contain;
       }
-      iron-selector a {
-        font-weight: bold;
-        display: inline-block;
-        font-size: 10px;
-        padding: 0 1.9em;
-        line-height: 36px;
+      .logo {
+        font-family: "Oneday Condensed", serif;
+        font-size: 22px;
+        padding-left: 34px; /* 50px by design - 16px coming from app-to*/
+      }
+      app-header {
+        height: 207px;
+        position: relative;
+        z-index: 2;
       }
       app-toolbar {
         padding: 0;
         height: 36px;
-        z-index: 2;
         @apply --layout-end-justified;
         @apply --layout-end;
       }
 
-      /* Sections */
-      app-header.speaking {
-        background-image: url('/images/Header/mobile/lime.png');
+      iron-selector {
+        text-align: right;
+        font-size: 10px;
+        margin-right: -1.9em;
       }
-      app-header.working {
-        background-image: url('/images/Header/mobile/blue.png');
+      iron-selector a {
+        display: inline-block;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 0 1.9em;
+        line-height: 36px;
       }
-      app-header.writing {
-        background-image: url('/images/Header/mobile/green.png');
+      .section-title {
+        margin: 0;
+        padding: 0;
+        text-align: right;
+      }
+      .section-title span:first-child {
+        display: block;
+        text-transform: none;
+        opacity: .5;
+        font-size: 24px;
+      }
+      .section-title span:last-child {
+        display: block;
+        text-transform: uppercase;
+        font-size: 56px;
+        line-height: .6em;
       }
 
-      app-header.working app-toolbar a,
-      app-header.writing app-toolbar a {
+      /* Sections */
+      :host([page="speaking"]) {
+        background-color: var(--app-lime-color);
+      }
+      :host([page="working"]) {
+        background-color: var(--app-blue-color);
+      }
+      :host([page="working"]):before {
+        background-image: url('/images/working-mobile.png');
+        width: 214px;
+        height: 195px;
+        top: 40px;
+        left: 0;
+      }
+      :host([page="writing"]) {
+        background-color: var(--app-green-color);
+      }
+
+      :host([page="working"]),
+      :host([page="writing"]),
+      :host([page="working"]) app-toolbar a,
+      :host([page="writing"]) app-toolbar a {
         color: var(--app-alt-font-color);
       }
 
+      @media screen and (min-width: 375px) {
+        :host([page="working"]):before {
+          left: calc(var(--app-mobile-side-margin) - 12px);
+        }
+      }
       @media screen and (min-width: 768px) {
+        :host([page="working"]):before {
+          background-image: url('/images/working-tablet.png');
+          width: 442px;
+          height: 407px;
+          top: 75px;
+          left: calc(var(--app-tablet-side-margin) - 58px);
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        :host([page="working"]):before {
+          background-image: url('/images/working.png');
+          width: 536px;
+          height: 489px;
+          left: calc(var(--app-desktop-side-margin) - 190px);
+        }
+      }
+      /* Handle RETINA screens */
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2),
+      only screen and (   min--moz-device-pixel-ratio: 2),
+      only screen and (     -o-min-device-pixel-ratio: 2/1),
+      only screen and (        min-device-pixel-ratio: 2),
+      only screen and (                min-resolution: 192dpi),
+      only screen and (                min-resolution: 2dppx) {
+        :host([page="working"]):before {
+          background-image: url('/images/working-mobile@2x.png');
+        }
+      }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2) and ( min-width: 768px),
+      only screen and (   min--moz-device-pixel-ratio: 2) and ( min-width: 768px),
+      only screen and (     -o-min-device-pixel-ratio: 2/1) and ( min-width: 768px),
+      only screen and (        min-device-pixel-ratio: 2) and ( min-width: 768px),
+      only screen and (                min-resolution: 192dpi) and ( min-width: 768px),
+      only screen and (                min-resolution: 2dppx) and ( min-width: 768px) {
+        :host([page="working"]):before {
+          background-image: url('/images/working-tablet@2x.png');
+        }
+      }
+      @media
+      only screen and (-webkit-min-device-pixel-ratio: 2) and ( min-width: 1024px),
+      only screen and (   min--moz-device-pixel-ratio: 2) and ( min-width: 1024px),
+      only screen and (     -o-min-device-pixel-ratio: 2/1) and ( min-width: 1024px),
+      only screen and (        min-device-pixel-ratio: 2) and ( min-width: 1024px),
+      only screen and (                min-resolution: 192dpi) and ( min-width: 1024px),
+      only screen and (                min-resolution: 2dppx) and ( min-width: 1024px) {
+        :host([page="working"]):before {
+          background-image: url('/images/working@2x.png');
+        }
+      }
+
+
+      @media screen and (min-width: 768px) {
+        :host {
+          background-image: url('/images/header-bottom.png');
+        }
         iron-selector a {
           font-size: .7em;
           padding: 0 2.3em;
@@ -87,19 +184,6 @@
         }
         app-header {
           height: 454px;
-        }
-        /* Sections */
-        app-header.speaking {
-          background-image: url('/images/Header/normal/lime.png');
-        }
-        app-header.working {
-          background-image: url('/images/Header/normal/blue.png');
-        }
-        app-header.writing {
-          background-image: url('/images/Header/normal/green.png');
-        }
-        app-header:after {
-          background-image: url('/images/dashed-border.svg');
         }
         app-toolbar {
           height: 47px;
@@ -110,15 +194,17 @@
     <app-header class$="[[page]]" reveal>
       <app-toolbar>
         <div class="logo hide-on-mobile" main-title><a href="/" aria-label="Go Home :)">Denys Mishunov</a></div>
-
         <iron-selector id="nav" selected="[[page]]" attr-for-selected="name" role="navigation">
           <!--<a name="frontpage" href="[[rootPath]]frontpage">Frontpage</a>-->
           <a name="working" href="/working">Working</a>
           <a name="speaking" href="/speaking">Speaking</a>
           <a name="writing" href="/writing">Writing</a>
         </iron-selector>
-
       </app-toolbar>
+      <h1 class="section-title">
+        <span>sometimes I</span>
+        <span>[[__computeSectionTitle(page)]]</span>
+      </h1>
     </app-header>
 
   </template>
@@ -128,8 +214,28 @@
 
       static get properties() {
         return {
-          page: String
+          page: {
+            type: String,
+            reflectToAttribute: true
+          }
         }
+      }
+      __computeSectionTitle(page) {
+        var title = 'Do nothing :)';
+        if (page) {
+          switch(page) {
+            case "working":
+              title = 'work';
+              break;
+            case "speaking":
+              title = 'speak';
+              break;
+            case "writing":
+              title = 'write';
+              break;
+          }
+        }
+        return title;
       }
     }
     customElements.define(MyNavigation.is, MyNavigation);

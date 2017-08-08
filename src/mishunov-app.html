@@ -12,13 +12,13 @@
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="mishunov-app">
+<!--<link rel="lazy-import" href="my-home.html">-->
+<!--<link rel="lazy-import" href="my-working.html">-->
+<!--<link rel="lazy-import" href="my-writing.html">-->
+<!--<link rel="lazy-import" href="my-speaking.html">-->
+<!--<link rel="lazy-import" href="my-view404.html">-->
 
   <template>
-    <!--<link rel="lazy-import" href="my-home.html">-->
-    <!--<link rel="lazy-import" href="my-working.html">-->
-    <!--<link rel="lazy-import" href="my-writing.html">-->
-    <!--<link rel="lazy-import" href="my-speaking.html">-->
-    <!--<link rel="lazy-import" href="my-view404.html">-->
     <style include="shared-styles">
       :host {
         display: block;
@@ -27,12 +27,12 @@
         position: relative;
         box-sizing: border-box;
         min-height: 100%;
-        padding-bottom: 130px;
+        padding: 0 0 130px; /* 130px is the height of the footer on mobile */
       }
 
       @media screen and (min-width: 768px) {
         :host {
-          padding-bottom: 218px;
+          padding-bottom: 218px;  /* 218px is the height of the footer on devices on large screens */
         }
       }
     </style>
@@ -45,7 +45,7 @@
       tail="{{subroute}}"></app-route>
 
 
-    <my-navigation page="[[page]]" role="navigation"></my-navigation>
+    <my-navigation class="react-to-width" page="[[page]]" role="navigation"></my-navigation>
 
 
     <iron-pages
@@ -54,11 +54,11 @@
       fallback-selection="view404"
       role="main">
 
-      <my-home name="home"></my-home>
-      <my-working name="working"></my-working>
-      <my-speaking name="speaking"></my-speaking>
-      <my-writing name="writing"></my-writing>
-      <my-view404 name="view404"></my-view404>
+      <my-home class="react-to-width" name="home"></my-home>
+      <my-working class="react-to-width" name="working"></my-working>
+      <my-speaking class="react-to-width" name="speaking"></my-speaking>
+      <my-writing class="react-to-width" name="writing"></my-writing>
+      <my-view404 class="react-to-width" name="view404"></my-view404>
     </iron-pages>
 
     <my-footer></my-footer>

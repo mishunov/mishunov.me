@@ -17,11 +17,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :root {
         --app-primary-font-color: #000;
         --app-alt-font-color: #fff;
-        --app-primary-color: #FFDB00;
+        --app-primary-color: #FFE11A;
         --app-secondary-color: #F1CD00;
         --app-lime-color: #BEDB39;
         --app-green-color: #1F8A70;
         --app-blue-color: #004358;
+
+        --app-mobile-side-margin: 10%;
+        --app-tablet-side-margin: 12%;
+        --app-desktop-side-margin: 22.5%;
+        --app-desktop-max-width: 792px;
       }
       h1, h2, h3, h4 {
         font-family: "Oneday Condensed", serif;
@@ -46,9 +51,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .hide-on-mobile {
         display: none;
       }
+      .react-to-width {
+        padding-left: var(--app-mobile-side-margin);
+        padding-right: var(--app-mobile-side-margin);
+      }
       @media screen and (min-width: 768px) {
         .hide-on-mobile {
           display: initial;
+        }
+        .react-to-width {
+          padding-left: var(--app-tablet-side-margin);
+          padding-right: var(--app-tablet-side-margin);
+        }
+      }
+      @media screen and (min-width: 1025px) {
+        .react-to-width {
+          padding-left: var(--app-desktop-side-margin);
+          padding-right: var(--app-desktop-side-margin);
         }
       }
     </style>
