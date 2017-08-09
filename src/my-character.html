@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id=my-character>
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        z-index: 2;
+        background-color: transparent;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    </style>
+    <picture>
+      <source media="(max-width: 767px)"
+              srcset="/images/[[page]]-mobile.png,
+                        /images/[[page]]-mobile@2x.png 1.5x,
+                        /images/[[page]]-mobile@2x.png 2x">
+      <source media="(max-width: 1023px)"
+              srcset="/images/[[page]]-tablet.png,
+                        /images/[[page]]-tablet@2x.png 1.5x,
+                        /images/[[page]]-tablet@2x.png 2x">
+      <source srcset="/images/[[page]].png,
+                        /images/[[page]]@2x.png 1.5x,
+                        /images/[[page]]@2x.png 2x">
+      <img src="/images/[[page]].png" alt="">
+    </picture>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyCharacter extends Polymer.Element {
+      static get is() {
+        return 'my-character';
+      }
+
+      static get properties() {
+        return {
+          page: String
+        };
+      }
+    }
+
+    window.customElements.define(MyCharacter.is, MyCharacter);
+  </script>
+</dom-module>

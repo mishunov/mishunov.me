@@ -55,16 +55,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-left: var(--app-mobile-side-margin);
         padding-right: var(--app-mobile-side-margin);
       }
-      @media screen and (min-width: 768px) {
-        .hide-on-mobile {
-          display: initial;
-        }
+      @media screen and (min-width: 600px) {
         .react-to-width {
           padding-left: var(--app-tablet-side-margin);
           padding-right: var(--app-tablet-side-margin);
         }
       }
-      @media screen and (min-width: 1025px) {
+      @media screen and (min-width: 768px) {
+        .hide-on-mobile {
+          display: initial;
+        }
+      }
+      @media screen and (min-width: 1024px) {
         .react-to-width {
           padding-left: var(--app-desktop-side-margin);
           padding-right: var(--app-desktop-side-margin);
