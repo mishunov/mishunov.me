@@ -4,16 +4,99 @@
   <template>
     <style>
       :host {
+        display: block;
         position: absolute;
+        top: 40px;
         z-index: 2;
         background-color: transparent;
         background-position: 50% 50%;
         background-repeat: no-repeat;
         background-size: contain;
       }
+      img {
+        width: 100%;
+      }
+      :host([page="working"]) {
+        left: calc(var(--app-mobile-side-margin) * -1);
+      }
+      :host([page="writing"]) {
+        left: -15px;
+      }
+      :host([page="speaking"]) {
+        left: -15px;
+      }
+
+
+      @media screen and (min-width: 414px) {
+        :host([page="working"]) {
+          left: -12px;
+        }
+        :host([page="writing"]) {
+          left: 0;
+        }
+        :host([page="speaking"]) {
+          left: 0;
+        }
+      }
+      @media screen and (min-width: 500px) {
+        :host {
+          top: 20px;
+        }
+        :host([page="working"]) {
+          width: 250px;
+        }
+        :host([page="writing"]) {
+          width: 210px;
+        }
+        :host([page="speaking"]) {
+          width: 180px;
+        }
+      }
+      @media screen and (min-width: 600px) {
+        :host([page="working"]) {
+          width: 260px;
+        }
+        :host([page="writing"]) {
+          width: 230px;
+        }
+        :host([page="speaking"]) {
+          width: 220px;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        :host {
+          top: 75px;
+        }
+        :host([page="working"]),
+        :host([page="writing"]),
+        :host([page="speaking"]) {
+          width: auto;
+          /*top: 75px;*/
+          left: -58px;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        :host([page="working"]) {
+          left: -73px;
+        }
+      }
+      /*@media screen and (min-width: 1280px) {*/
+        /*:host([page="working"]),*/
+        /*:host([page="writing"]),*/
+        /*:host([page="speaking"]) {*/
+          /*left: 0px;*/
+        /*}*/
+      /*}*/
+      /*@media screen and (min-width: 1600px) {*/
+        /*:host([page="working"]),*/
+        /*:host([page="writing"]),*/
+        /*:host([page="speaking"]) {*/
+          /*left: 0px;*/
+        /*}*/
+      /*}*/
     </style>
     <picture>
-      <source media="(max-width: 767px)"
+      <source media="(max-width: 599px)"
               srcset="/images/[[page]]-mobile.png,
                         /images/[[page]]-mobile@2x.png 1.5x,
                         /images/[[page]]-mobile@2x.png 2x">
@@ -40,7 +123,10 @@
 
       static get properties() {
         return {
-          page: String
+          page: {
+            type: String,
+            reflectToAttribute: true
+          }
         };
       }
     }

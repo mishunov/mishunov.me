@@ -16,7 +16,7 @@
     <style include="shared-styles">
       :host {
         display: block;
-        margin: 0;
+        margin: 0 0 48px;
         padding: 0;
         position: relative;
         transition: background-color .3s ease-out;
@@ -37,13 +37,13 @@
         background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;
         background-size: cover;
       }
-
+      [main-title] {
+        pointer-events: auto;
+      }
       #logo {
         display: inline-block;
         font-family: "Oneday Condensed", serif;
         font-size: 22px;
-        padding-left: 34px; /* 50px by design - 16px coming from app-to*/
-        transition: opacity .3;
       }
       app-header {
         height: 207px;
@@ -56,45 +56,24 @@
         @apply --layout-end-justified;
         @apply --layout-end;
       }
+
+      /*
+      ** Sections
+      */
       :host([page="working"]),
       :host([page="writing"]),
       :host([page="working"]) a,
       :host([page="writing"]) a {
         color: var(--app-alt-font-color);
       }
-
-      /*
-      ** Sections
-      */
       :host([page="speaking"]) {
         background-color: var(--app-lime-color);
       }
-
       :host([page="working"]) {
         background-color: var(--app-blue-color);
       }
-      :host([page="working"]) #character {
-        top: 40px;
-        left: calc(var(--app-mobile-side-margin) * -1);
-      }
       :host([page="writing"]) {
         background-color: var(--app-green-color);
-      }
-      @media screen and (min-width: 375px) {
-        :host([page="working"]) #character {
-          left: -12px;
-        }
-      }
-      @media screen and (min-width: 768px) {
-        :host([page="working"]) #character {
-          top: 75px;
-          left: -58px;
-        }
-      }
-      @media screen and (min-width: 1024px) {
-        :host([page="working"]) #character {
-          left: -190px;
-        }
       }
       /* end Sections */
 
@@ -102,11 +81,24 @@
         :host {
           background-image: url('/images/header-bottom.png');
         }
+        :host:after {
+          background-image: url('/images/dashed-border.svg');
+        }
         app-header {
           height: 454px;
         }
         app-toolbar {
           height: 47px;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        :host {
+          margin-bottom: 110px;
+        }
+      }
+      @media screen and (min-width: 1758px) {
+        :host:after {
+          background-size: auto;
         }
       }
     </style>

@@ -1,0 +1,97 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="shared-styles.html">
+
+<!-- shared styles for all views -->
+<dom-module id="shared-content-styles">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      :host > p:first-of-type:first-letter {
+        float: left;
+        font-family: "Oneday Condensed", serif;
+        font-size: 5em;
+        line-height: .75em;
+        padding-right: .1em;
+      }
+      :host > h1 + p:first-of-type:first-letter {
+        float: none;
+        font-family: "Open Sans", "Helvetica Neue", sans-serif;
+        font-size: inherit;
+        line-height: inherit;
+        padding: 0;
+      }
+      h1, h2, h3, h4 {
+        font-family: "Oneday Condensed", serif;
+        font-weight: normal;
+        line-height: 1.1;
+      }
+      h1 {
+        font-size: 38px;
+      }
+      h2 {
+        font-size: 28px;
+      }
+      h3 {
+        font-size: 22px;
+      }
+      h4 {
+        font-size: 14px;
+      }
+      @media screen and (min-width: 600px) {
+        h1 {
+          font-size: 48px;
+        }
+        h2 {
+          font-size: 36px;
+        }
+        h3 {
+          font-size: 27px;
+        }
+        h4 {
+          font-size: 18px;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        h1 {
+          font-size: 58px;
+        }
+        h2 {
+          font-size: 43px;
+        }
+        h3 {
+          font-size: 32px;
+        }
+        h4 {
+          font-size: 22px;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        h1 {
+          font-size: 64px;
+        }
+        h2 {
+          font-size: 48px;
+        }
+        h3 {
+          font-size: 36px;
+        }
+        h4 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </template>
+</dom-module>

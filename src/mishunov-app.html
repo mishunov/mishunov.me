@@ -34,6 +34,16 @@
           padding-bottom: 218px;  /* 218px is the height of the footer on devices on large screens */
         }
       }
+      @media screen and (min-width: 2000px) {
+        iron-pages .react-to-width {
+          -webkit-column-count: 2;
+          -moz-column-count: 2;
+          column-count: 2;
+          -moz-column-gap: 2em;
+          -webkit-column-gap: 2em;
+          column-gap: 2em;
+        }
+      }
     </style>
 
     <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
