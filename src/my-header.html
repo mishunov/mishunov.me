@@ -1,5 +1,6 @@
 <!-- Load the Polymer.Element base class -->
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-if.html">
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
@@ -9,9 +10,9 @@
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="my-character.html">
 <link rel="import" href="my-section-title.html">
 <link rel="import" href="my-navigation.html">
+<link rel="import" href="my-character.html">
 
 <dom-module id="my-header">
   <template>
@@ -117,19 +118,39 @@
           background-size: auto;
         }
       }
+
+      /*
+      ** Home Page
+      ** (we should override all styles incl. responsive ones, hence these go after media queries)
+      */
+
+      :host([page="home"]) {
+        background-image: none;
+      }
+      :host([page="home"]):after {
+        display: none;
+      }
+      :host([page="home"]) app-header {
+        height: auto;
+      }
+      :host([page="home"]) app-toolbar {
+        @apply --layout-center-justified;
+      }
     </style>
 
-    <app-header class$="[[page]]" reveal>
+    <app-header reveal>
       <app-toolbar>
-        <div main-title>
+        <div main-title hidden="[[isHomePage]]">
           <a class="hide-on-mobile" href="/" aria-label="Go Home :)">Denys Mishunov</a>
           <a class="show-on-mobile" name="home" href="/" title="Go home :)"><iron-icon icon="home"></iron-icon></a>
         </div>
         <my-navigation page="[[page]]"></my-navigation>
       </app-toolbar>
-      <my-section-title page="[[page]]"></my-section-title>
+      <my-section-title page="[[page]]" hidden="[[isHomePage]]"></my-section-title>
 
-      <my-character id="character" page="[[page]]"></my-character>
+      <template is="dom-if" if="[[!isHomePage]]">
+        <my-character id="character" page="[[page]]"></my-character>
+      </template>
     </app-header>
 
   </template>
@@ -142,8 +163,15 @@
           page: {
             type: String,
             reflectToAttribute: true
+          },
+          isHomePage: {
+            type: Boolean,
+            computed: '_isHomePage(page)'
           }
         }
+      }
+      _isHomePage(page) {
+        return page === 'home' || false;
       }
     }
     customElements.define(MyHeader.is, MyHeader);

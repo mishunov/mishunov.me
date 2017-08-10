@@ -31,7 +31,7 @@
 
       @media screen and (min-width: 768px) {
         :host {
-          padding-bottom: 218px;  /* 218px is the height of the footer on devices on large screens */
+          padding-bottom: 218px;  /* 218px is the height of the footer on devices with larger screens */
         }
       }
       @media screen and (min-width: 2000px) {
@@ -43,6 +43,10 @@
           -webkit-column-gap: 2em;
           column-gap: 2em;
         }
+      }
+      /* We should override even the media queries for this case */
+      :host([page="home"]) {
+        padding-bottom: 0;
       }
     </style>
 
@@ -63,7 +67,7 @@
       fallback-selection="view404"
       role="main">
 
-      <my-home class="react-to-width" name="home"></my-home>
+      <my-home name="home"></my-home>
       <my-working class="react-to-width" name="working"></my-working>
       <my-speaking class="react-to-width" name="speaking"></my-speaking>
       <my-writing class="react-to-width" name="writing"></my-writing>
