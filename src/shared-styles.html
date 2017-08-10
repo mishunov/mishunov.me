@@ -27,7 +27,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-mobile-side-margin: 10%;
         --app-tablet-side-margin: 12%;
         --app-desktop-side-margin: 22.5%;
-        --app-desktop-max-width: 792px;
       }
       a {
         color: var(--app-primary-font-color);
@@ -49,6 +48,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       @media screen and (min-width: 768px) {
         .hide-on-mobile {
           display: initial;
+        }
+        .show-on-mobile {
+          display: none;
         }
       }
       @media screen and (min-width: 1200px) {
