@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>mishunov.me</title>
+    <meta name="description" content="Personal web site of Denys Mishunov">
+
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link rel="manifest" href="/manifest.json">
+
+    <script>
+      /**
+       * [polymer-root-path]
+       *
+       * By default, we set `Polymer.rootPath` to the server root path (`/`).
+       * Leave this line unchanged if you intend to serve your app from the root
+       * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
+       *
+       * If you intend to serve your app from a non-root path (e.g., with URLs
+       * like `my.domain/my-app/` and `my.domain/my-app/view1`), edit this line
+       * to indicate the path from which you'll be serving, including leading
+       * and trailing slashes (e.g., `/my-app/`).
+       */
+      window.Polymer = {rootPath: '/'};
+    </script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 12px;
+        font-family: "Open Sans", "Helvetica Neue", sans-serif;
+        background-color: #FFE11A;
+      }
+      .logo {
+        font-family: "Oneday Condensed", serif;
+        color: #000;
+        font-size: 24px;
+        position: fixed;
+        right: 10px;
+        bottom: 15px;
+        z-index: 2;
+        display: inline-block;
+        width: 55px;
+        height: 55px;
+        line-height: 55px;
+        border-radius: 50%;
+        background: transparent url("/images/logo-bg-mobile.svg") 50% 50% no-repeat;
+        text-align: center;
+        vertical-align: middle;
+        text-decoration: none;
+        padding: 0;
+        margin: 0;
+      }
+      @media screen and (min-width: 600px) {
+        body {
+          font-size: 15px;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        body {
+          font-size: 18px;
+        }
+        .logo {
+          font-size: 48px;
+          position: absolute;
+          display: inline-block;
+          width: auto;
+          height:auto;
+          bottom: 29px;
+          right: 20px;
+          background: transparent;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        body {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <mishunov-app></mishunov-app>
+
+
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="/src/mishunov-app.html">
+
+    <script>
+      window.performance && performance.mark && performance.mark('index.html');
+    </script>
+  </body>
+</html>

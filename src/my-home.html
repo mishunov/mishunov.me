@@ -1,6 +1,15 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 
 <!--<link rel="import" href="shared-styles.html">-->
+
+<script src="gsap/TweenLite.min.js"></script>
+<script src="gsap/TimelineLite.min.js"></script>
+<script src="gsap/CSSPlugin.min.js"></script>
+<script src="gsap/EasePack.min.js"></script>
+<script src="gsap/MorphSVGPlugin.min.js"></script>
+<script src="gsap/DrawSVGPlugin.min.js"></script>
+
+<!--<link rel="import" href="animatable-behavior.html">-->
 
 <dom-module id=my-home>
   <template>
@@ -17,35 +26,14 @@
         padding-top: 90px;
         box-sizing: border-box;
       }
-      .svg-container {
-        position: relative;
-      }
-      #intro {
-        width: 271px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      picture {
-        display: block;
-        position: relative;
-        z-index: 2;
-        width: 277px;
-        margin-top: 40px;
-        margin-left: auto;
-        margin-right: auto;
-      }
+
       img {
         width: 100%;
       }
 
       /* prepare for the animations */
-      #waves {
-        width: 768px; /* the width of the SVG waves picture. We should use the full width of it to avoid scaling */
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        height: auto;
-        z-index: 1;
+      .svg-container {
+        position: relative;
       }
       canvas {
         display: block;
@@ -59,53 +47,218 @@
         width: 100%;
         height: 100%;
       }
+
+      /* INTRO*/
+      #intro {
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* WAVES */
+      #waves {
+        /*width: 768px; !* the width of the SVG waves picture. We should use the full width of it to avoid scaling *!*/
+        width: auto;
+        height: 50%;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
       [id^="wave-start"] {
         visibility: hidden;
       }
+      /*[id$="-layer"] {*/
+        /*transition: opacity .3s ease-out;*/
+      /*}*/
+      #wavesGroup {
+        width: auto;
+        z-index: 1;
+      }
+
+      /* SMILE */
+      #character {
+        position: relative;
+        z-index: 2;
+        width: 278px;
+        height: 264px;
+        margin-top: 40px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #smile {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+      #smile canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #smile svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #mouth-end {opacity: 0}
+      #mouth-closed-shadow {
+        visibility: hidden
+      }
       /* end prepare for the animations  */
+
+
+      @media screen and (min-width: 414px) {
+        #character {
+          width: 359px;
+          height: 342px;
+        }
+      }
+      @media screen and (min-width: 600px) {
+        #character {
+          width: 468px;
+          height: 446px;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        #character {
+          width: 603px;
+          height: 574px;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        #character {
+          width: 643px;
+          height: 612px;
+        }
+      }
+      @media screen and (min-width: 1280px) {
+        #waves {
+          width: 100%;
+        }
+      }
     </style>
 
     <div id="intro" class="svg-container">
       <canvas width="271" height="71"></canvas>
-      <svg viewBox="0 0 271 71" xmlns="http://www.w3.org/2000/svg"><path d="M0 1h22.485v26.385h21.03V1H66v68H43.515V44.458h-21.03V69H0V1zm75 0h58.118v17.073h-35.38v8.342h32.146v17.073H97.738v8.44H134V69H75V1zm68 0h22.58v49.278H194V69h-51V1zm84.447 20.21c-2.268 1.475-4.077 3.49-5.425 6.044-1.348 2.555-2.022 5.438-2.022 8.648s.674 6.11 2.022 8.696c1.348 2.588 3.157 4.635 5.425 6.142 2.27 1.507 4.72 2.26 7.35 2.26s5.03-.737 7.2-2.21c2.17-1.475 3.88-3.522 5.13-6.143 1.248-2.62 1.873-5.535 1.873-8.745 0-3.21-.625-6.11-1.874-8.697-1.25-2.587-2.96-4.602-5.13-6.043-2.17-1.44-4.57-2.162-7.2-2.162s-5.08.737-7.35 2.21zm25.34-16.65c5.713 3.038 10.177 7.24 13.392 12.608 3.213 5.367 4.82 11.413 4.82 18.138 0 6.79-1.607 12.9-4.82 18.332-3.216 5.432-7.68 9.683-13.394 12.755C247.07 69.463 240.643 71 233.5 71c-7.143 0-13.57-1.536-19.286-4.607-5.714-3.072-10.178-7.323-13.393-12.755-3.213-5.432-4.82-11.542-4.82-18.332 0-6.79 1.607-12.868 4.82-18.235 3.216-5.366 7.68-9.553 13.394-12.56C219.93 1.503 226.357 0 233.5 0c7.143 0 13.57 1.52 19.286 4.56zM170 1h13.807v29.42H194V42h-24V1z" fill="#FFF" fill-rule="evenodd"/></svg>
+      <svg viewBox="0 0 271 71" xmlns="http://www.w3.org/2000/svg"><g id="Frontpage" fill="none" fill-rule="evenodd"><g id="iPhone-SE" fill="#FFF"><g id="Group"><path id="Path" d="M0 1h22.485v26.385h21.03V1H66v68H43.515V44.458h-21.03V69H0z"/><path id="Path" d="M75 1h58.118v17.073h-35.38v8.342h32.146v17.073H97.738v8.44H134V69H75z"/><path id="Path" d="M143 1h22.58v49.278H194V69h-51z"/><path id="Path" d="M170 1h13.807v29.42H194V42h-24z"/><path d="M252.786 4.56c5.714 3.038 10.178 7.24 13.393 12.608 3.21 5.367 4.82 11.412 4.82 18.138 0 6.79-1.61 12.9-4.82 18.332-3.22 5.432-7.68 9.683-13.4 12.755C247.07 69.463 240.64 71 233.5 71c-7.143 0-13.57-1.536-19.286-4.607-5.714-3.072-10.178-7.323-13.393-12.755-3.21-5.432-4.82-11.542-4.82-18.332 0-6.79 1.61-12.868 4.82-18.235 3.22-5.36 7.68-9.55 13.4-12.56 5.71-3 12.14-4.51 19.28-4.51 7.144 0 13.57 1.52 19.287 4.56zm-25.34 16.65c-2.267 1.475-4.076 3.49-5.424 6.044-1.348 2.555-2.022 5.438-2.022 8.648s.674 6.11 2.022 8.696c1.348 2.588 3.157 4.635 5.425 6.142 2.27 1.507 4.72 2.26 7.35 2.26s5.03-.737 7.2-2.21c2.17-1.475 3.88-3.522 5.13-6.143 1.248-2.62 1.873-5.535 1.873-8.745 0-3.21-.625-6.11-1.874-8.697-1.25-2.587-2.96-4.602-5.13-6.043-2.17-1.44-4.57-2.162-7.2-2.162s-5.08.737-7.35 2.21z" id="Combined-Shape"/></g></g></g></svg>
     </div>
 
+    <div id="character">
       <picture>
-        <source media="(max-width: 599px)"
+        <source media="(max-width: 413px)"
                 srcset="/images/home-mobile.png,
-                        /images/home-mobile@2x.png 1.5x,
-                        /images/home-mobile@2x.png 2x">
+                    /images/home-mobile@2x.png 1.5x,
+                    /images/home-mobile@2x.png 2x">
+        <source media="(max-width: 599px)"
+                srcset="/images/home-large-mobile.png,
+                    /images/home-large-mobile@2x.png 1.5x,
+                    /images/home-large-mobile@2x.png 2x">
+        <source media="(max-width: 766px)"
+                srcset="/images/home-small-tablet.png,
+                    /images/home-small-tablet@2x.png 1.5x,
+                    /images/home-small-tablet@2x.png 2x">
         <source media="(max-width: 1023px)"
                 srcset="/images/home-tablet.png,
-                        /images/home-tablet@2x.png 1.5x,
-                        /images/home-tablet@2x.png 2x">
+                    /images/home-tablet@2x.png 1.5x,
+                    /images/home-tablet@2x.png 2x">
         <source srcset="/images/home.png,
-                        /images/home@2x.png 1.5x,
-                        /images/home@2x.png 2x">
+                    /images/home@2x.png 1.5x,
+                    /images/home@2x.png 2x">
         <img src="/images/home.png" alt="">
       </picture>
+    </div>
 
-      <div class="svg-container" id="waves">
-        <canvas width="803" height="358"></canvas>
-        <svg viewBox="0 0 803 358" xmlns="http://www.w3.org/2000/svg"><g id="Page-1" fill="none" fill-rule="evenodd"><g id="waves"><g id="lime-layer" transform="translate(0 3)"><path d="M0 205h804c-.004-113.165-.004-176.807 0-190.926-19-1-45.307 4.223-64.557 22.884-9.03 8.753-32.088 16.397-48.125 14.11-16.036-2.288-22.916-31.405-53.624-27.764-30.708 3.64-40.786 18.647-82.04 15.02-47.972-4.22-55.912-22.778-84.787-22.778-43.083 2.276-55.245 29.497-84.79 29.148-42.417-.502-79.44-42.35-130.117-44.627-50.677-2.277-32.217 54.597-67.215 53.23-28.243-1.1-43.13-37.75-74-37.75-25.048 0-22 17.754-51.792 21.41-40.59 4.984-33.363-12.62-51.294-20.042-2.614-1.08-7.76-2.293-11.66-2.84V205z" id="bg-end1" fill="#BEDB39"/><path d="M0 14.35c25.968 3 22.97 24 48.94 24 44.943 0 32.958-20 64.918-22 31.96-2 45.228 39.672 79.9 37 25.968-2 14.982-48 53.934-53 38.95-5 103.87 45 136.83 45 33.527 0 35.954-21 74.906-28 38.95-7 50.936 23 105.868 22 31.716-.576 55.93-17 78.902-16 22.97 1 31.14 27.986 51.935 29 40.95 2 48.94-40 106.867-38" id="wave-end1" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><path d="M803 44H0" id="wave-start1" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><circle id="circle" fill="#FFF" fill-rule="nonzero" cx="401.5" cy="43.5" r="5.5"/></g><g id="green-layer" transform="translate(0 79)"><path d="M803 18c-19 1-22.682 17.105-70.654 21.324-41.254 3.627-51.332-11.38-82.04-15.02-30.708-3.64-37.588 25.476-53.624 27.764-16.037 2.287-39.095-5.357-48.125-14.11C529.307 19.298 503 14.074 484 15.074c-4.743.75-9.265 1.85-11.66 2.84-17.93 7.424-10.703 25.027-51.293 20.044-29.79-3.657-26.744-21.412-51.79-21.412-30.872 0-45.76 36.65-74.002 37.752-34.998 1.366-16.538-55.508-67.216-53.23-50.68 2.275-87.7 44.124-130.118 44.626C68.378 46.044 45 10 0 17.914V206h803V18z" id="bg-end2" fill="#1F8A70"/><path d="M0 18c49-7 64 27 99 27.35 35 .65 98-50 137-45s28 52 54 54c34.716 2.672 48-40 80-38s20 22 65 22c26 0 19-20.35 56-23.35s66 40.35 100 38c20.322-1.406 27.892-26.35 50-29 22.108-2.65 45.055 17.036 84 16 21.624-.575 59-12.762 78-22" id="wave-end2" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><path d="M803 30H0" id="wave-start2" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><circle id="circle" fill="#FFF" fill-rule="nonzero" cx="401.5" cy="29.5" r="5.5"/></g><g id="blue-layer" transform="translate(0 152)"><path d="M0 206h803V2l-13-.933C744 3 698.344 44.63 660 46c-28 1-41.784-27.178-84.867-29.454-28.875 0-36.815 18.56-84.787 22.778-41.254 3.627-51.332-11.38-82.04-15.02-30.708-3.64-37.588 25.476-53.624 27.764-16.037 2.287-39.095-5.357-48.125-14.11C287.307 19.298 260.58 13.07 243 16c-30 5-23.363 26.94-63.953 21.958-29.79-3.657-26.744-21.412-51.79-21.412-30.872 0-44.257 35.522-74.002 37.752C23.51 56.528 32 10 0 2v204z" id="bg-end3" fill="#004358"/><path d="M803 2c-48-9-109 44.35-142 44.35-33.57 0-36-21-75-28s-51 23-106 22c-31.756-.576-56-17-79-16s-31.18 27.986-52 29c-41 2-51-38.647-95-38C210 16 227.463 36.046 192 39c-36 3-34-22-67-22S80.784 55.817 51 54.35C18.27 52.74 37 11 0 2" id="wave-end3" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><path d="M803 29H0" id="wave-start3" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><circle id="circle" fill="#FFF" fill-rule="nonzero" cx="401.5" cy="28.5" r="5.5"/></g><g id="yellow-layer" transform="translate(0 229)"><path d="M0 129h802.994c0-71.095.002-113.71.006-127.847-5.222-1.274-9.09-1.56-13.674-.513-26.586 6.08-33.462 27.184-52.714 45.868-9.03 8.763-32.09 16.416-48.13 14.126-16.037-2.29-22.918-31.442-53.63-27.797-30.71 3.646-40.79 18.67-82.05 15.038-47.975-4.224-55.917-22.805-84.795-22.805-43.088 2.28-57.756 35.553-84.8 34.197-14.798-.743-21.545-26.45-47.214-37.844-22.92-6.38-41.712-12.307-74.716 9.572-33.003 21.88-69.893 28.272-76.55 28.272-9.078 0-28.93-3.227-38.962-8.216-13.75-6.834-19.71-26.434-33.92-25.98-14.21.457-22.002 17.778-51.797 21.44C13.542 52.22 30.712 5.468 0 1.153V129z" id="bg-end4" fill="#F1CD00"/><path d="M1 1.133c25.532 0 13.517 36.5 44.555 44.5 30.803 7.94 49.062-21 68.085-21 19.024 0 22.79 37.73 72.09 34 66.082-5 81.1-45 127.158-43 44.546 1.935 55.07 42 72.09 43 24.57 1.444 45.056-34 81.1-34 34.044 0 48.06 21 91.115 23 42.943 1.995 69.112-19.66 90.112-15 27.034 6 31.04 38 66.082 27 48.09-15.095 46.058-68 90.613-58.5" id="wave-end4" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><path d="M803 33H0" id="wave-start4" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/><circle id="circle" fill="#FFF" fill-rule="nonzero" cx="401.5" cy="32.5" r="5.5"/></g></g></g></svg>
-      </div>
+    <div class="svg-container" id="waves">
+      <canvas width="1280" height="481"></canvas>
+      <svg id="wavesGroup" viewBox="0 0 1280 481" xmlns="http://www.w3.org/2000/svg"><g id="Frontpage" fill="none" fill-rule="evenodd"><g id="Animate-to-Work-1"><g id="waves"><g id="lime-layer"><path d="M0 511h1280V25c-30.3-1.7-70.6 6.8-101.3 37.3-14.4 14.3-51.2 26.7-76.7 23-25.6-3.7-36.6-51.2-85.5-45.3-49 6-65 30.4-130.8 24.5-76.4-7-89-37-135-37C682 31 662.5 75.5 615.4 75 547.8 74 488.8 5.6 408 2c-80.8-3.6-51.3 89.2-107 87-45.2-2-69-61.6-118-61.6-40 0-35.2 29-82.7 35-64.7 8-53-20.7-81.7-32.8C14.4 27.8 6.2 25.8 0 25v486z" id="bg-end0" fill="#BEDB39"/><path d="M0 25.3c41.4 5 36.6 39 78 39 71.7 0 52.5-32.4 103.5-35.7 51-3.3 72 64.5 127.4 60.2 41-3.3 23-78 85-86.2 62-8.2 165 73.2 218 73.2 54 0 58-34.2 120-45.6 62-11.4 81 37.4 169 35.8 50-1 89-27.6 126-26 36 1.6 49 45.5 82 47.2 65 3.2 78-65 170-62" id="wave-end0" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/></g><g id="green-layer"><path d="M1280 135.7c-30.3 1.6-36.2 28-112.6 34.7-65.8 6-81.8-18.5-130.8-24.4-49-6-60 41.5-85.5 45.2-25 3.7-62-8.7-76-23-30-30.4-72-39-103-37.3-7 1-14 3-18 4-28 12-17 40-81 32-47.4-6-42.6-35-82.5-35-49.2 0-73 60-118 61-55.7 2.2-26.3-90.5-107-86.8-81 3.7-140 72-207.5 72.7-47 1-84.3-58-156-45v376h1280V135z" id="bg-end1" fill="#1F8A70"/><path d="M0 135.4c78-11.4 102 44 157.8 44.7 55.8 2 156.2-81 218.4-73 62.2 8 44.6 85 86 88 55.4 5 76.6-65 127.6-62s32 36 103.6 36c41.4 0 30.3-33 89.3-38S888 197 942 193c33-2.2 45-43 80-47.3 35-4.3 72 27.8 134 26.2 34.7-1 94-21 124-36" id="wave-end1" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/></g><g id="blue-layer"><path d="M0 511h1280V207.5l-20.7-1.5c-73.3 3.2-146 71.2-207.2 73.4-44 1.7-66-44.4-135-48-46 0-58 30.2-135 37-66 6-82-18.4-131-24.4s-60 41.6-85 45.4c-25 3.7-62-8.8-76-23-30.3-30.6-73-40.8-101-36-48 8.2-37.2 44-102 36-47.4-6-42.5-35-82.5-35-49.4 0-70.7 58-118 61.6-47.5 3.7-34-72.4-85-85.5V511z" id="bg-end2" fill="#004358"/><path d="M1280 207.7c-76.5-14.7-173.7 72.2-226.4 72.2-53.5 0-57.3-35-119.5-46-62-11-81 37-169 36-50-1-89-28-125-26-36 1-49 45-83 47-65 3-81-63-151-62s-42 34-99 38-54-36-106-36-71 63-118.5 61c-53-2-23-70-82-85" id="wave-end2" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/></g><g id="footer"><path d="M0 511h1280V303c-8.3-2.2-14.5-2.7-21.8-1-42.4 10-53.3 44.3-84 74.7-14.4 14.3-51.2 26.7-76.7 23-25.6-3.7-36.6-51.2-85.5-45.2-49 6-65 30.3-130.8 24.4-76.5-7-89.2-38-135.2-38-68.7 3-92 58-135.2 55-23.5-1-34.3-43-75.2-62-36.6-10.6-66.6-20-119 15.4-52.7 35.6-111.5 46-122 46-14.6 0-46.3-5.3-62.2-13.4-22-11-31.5-43-54-42.2-22.8.6-35.2 29-82.7 35-74 9-46.7-67-95.7-74v209z" id="bg-end3" fill="#F1CD00"/><path d="M2 302.8c40.7 0 21.5 59.6 71 72.6 49 13 78.2-34.2 108.6-34.2 30.3 0 36.3 61.5 115 55.4 105.2-8 129-73.4 202.6-70 71 3 87.7 68.4 115 70 39 2.4 71.7-55.4 129-55.4 54.4 0 76.8 34.2 145.4 37.5 68.4 3.3 110.2-32 143.6-24.5 43 9.8 49.5 62 105.4 44 76.6-24.5 73.4-110.8 144.4-95.4" id="wave-end3" stroke="#FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4.5 4.5"/</g></g></g></g></svg>
+    </div>
 
   </template>
 
   <script>
-    /**
-     * @customElement
-     * @polymer
-     */
-    class MyHome extends Polymer.Element {
-      static get is() {
-        return 'my-home';
-      }
-      static get properties() {
-        return {};
-      }
-    }
+    Polymer({
 
-    window.customElements.define(MyHome.is, MyHome);
+      is: 'my-home',
+
+      properties: {
+
+      },
+
+      _centerWaves: function () {
+        var circlesGroup = this.$.wavesGroup;
+        var circlesWidth = circlesGroup.getBoundingClientRect().width;
+        var viewport = document.documentElement.clientWidth;
+        var shift = circlesWidth - (circlesWidth/2 + viewport/2);
+
+        circlesGroup.style.left = "-" + shift + "px";
+      },
+
+      attached: function () {
+        this._centerWaves();
+      }
+
+
+//        function openSection(ev) {
+//          var section = parseInt(ev.target.getAttribute('data-section'), 10);
+//          var layers = document.querySelectorAll('g[id$="-layer"]');
+//          var requiredLayer = layers[section];
+//          var next = layers[section + 1];
+//          var prev = layers[section - 1];
+//          var rect;
+//
+//          tl = new TimelineLite();
+//          tl.paused(true);
+//          switch(section) {
+//            case 0:
+//              tl.to(next.querySelector('[id^="bg-end"]'), 0.3, {"fill": 'rgb(255,225,26)'})
+//                .to(layers[2], 0.3, {opacity:0}, "-=0.6");
+//              // layers[1].querySelector('[id^="bg-end"]').setAttribute('fill', 'rgb(255,225,26)');
+//              // layers[2].style.opacity = '0';
+//              break;
+//            case 1:
+//              tl.to(next.querySelector('[id^="bg-end"]'), 0.3, {"fill": 'rgb(255,225,26)'})
+//                .to(prev, 0.3, {opacity:0}, "-=0.6");
+//              // layers[0].style.opacity = '0';
+//              // layers[2].querySelector('[id^="bg-end"]').setAttribute('fill', 'rgb(255,225,26)');
+//              break;
+//            case 2:
+//              tl.to(layers[0], 0.3, {opacity:0})
+//                .to(prev, 0.3, {opacity:0}, "-=0.6");
+//              // layers[0].style.opacity = '0';
+//              // layers[1].style.opacity = '0';
+//              break;
+//          }
+//          var pos = "-=0";
+//          if(next) {
+//            rect = next.getBoundingClientRect();
+//            tl.to(next, 1, {y: rect.top + rect.height, transformOrigin:"top left"});
+//            pos = "-=1";
+//          }
+//          rect = bgs[section].getBoundingClientRect();
+//          tl.to(bgs[section], 1, {scaleY: (document.documentElement.clientHeight * 1.2)/rect.height, transformOrigin:"50% 100%"}, pos)
+//            .to(startLines[section], .2, {opacity: 0}, "-=1");
+//          // tl.to(requiredLayer, 1, {scaleY: 1, transformOrigin:"0% 0%"});
+//
+//          tl.play();
+//          // if (section === 2) {
+//          //   layers[0].style.opacity = '0';
+//          // } else if (section + 2 === layers.length - 1) {
+//          //   layers[section + 2].style.opacity = '0';
+//          // }
+//        }
+//
+//        var buttons = document.querySelectorAll('button');
+//        for(var i = 0, l = buttons.length; i<l; ++i) {
+//          buttons[i].addEventListener('click', openSection);
+//        }
+
+    });
   </script>
 </dom-module>
