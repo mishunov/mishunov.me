@@ -15,7 +15,6 @@
         right:0;
         left: 0;
         text-align: center;
-        font-size: 1.2em;
         font-family: "Oneday Condensed", serif;
         background: transparent url("/images/footer.png") 50% 100% repeat-x;
         @apply --layout-horizontal;
@@ -37,6 +36,7 @@
       li {
         list-style: none;
         display: inline-block;
+        font-size: 1.2em;
       }
       a {
         text-transform: uppercase;
@@ -48,10 +48,12 @@
       @media screen and (min-width: 768px) {
         :host {
           height: 218px;
-          font-size: inherit;
         }
         nav {
           margin-bottom: 40px;
+        }
+        li {
+          font-size: inherit;
         }
       }
       :host([page="home"]) {

@@ -23,7 +23,6 @@ svg {
 
 /* INTRO*/
 #intro {
-  width: 75%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -96,6 +95,17 @@ svg {
 
 /* end prepare for the animations  */
 
+@media screen and (orientation: portrait) {
+  #intro {
+    width: 75%;
+  }
+}
+@media screen and (orientation: landscape) {
+  #intro {
+    height: 24%;
+  }
+}
+
 @media screen and (min-width: 414px) {
   #character {
     width: 359px;
@@ -115,27 +125,39 @@ svg {
     width: 603px;
     height: 574px;
   }
+  #character {
+    margin-top: 12px;
+  }
 }
 
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1024px) and (orientation: portrait) {
   #character {
     width: 643px;
     height: 612px;
   }
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1024px) and (orientation: landscape) {
+  #character {
+    margin-top: -134px;
+  }
+}
+@media screen and (min-width: 1280px) and (orientation: landscape) {
   #waves {
     width: 100%;
+    height: auto;
   }
 }
 
-/* Styligng the Polymer-aware view */
-
-:host [id^="wave-end"] {
-  visibility: visible;
+@media screen and (min-width: 1280px) {
+  #character {
+    width: 643px;
+    height: 612px;
+  }
 }
-:host [id^="wave-start"],
-:host #circles {
-  visibility: hidden;
+@media screen and (min-width: 1280px) and (orientation: portrait) {
+  #waves {
+    width: 100%;
+    height: auto;
+  }
 }
