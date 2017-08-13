@@ -8,7 +8,7 @@
 
 <link rel="import" href="my-header.html">
 <link rel="import" href="my-footer.html">
-<link rel="import" href="shared-styles.html">
+<link rel="import" type="css" href="shared-styles.html">
 
 <dom-module id="mishunov-app">
 <!--<link rel="lazy-import" href="my-home.html">-->
@@ -21,7 +21,8 @@
     <style include="shared-styles">
       :host {
         display: block;
-        background: var(--app-primary-color);
+        /*background: var(--app-primary-color);*/
+        background-color: #FFE11A;
         color: var(--app-primary-font-color);
         position: relative;
         box-sizing: border-box;
