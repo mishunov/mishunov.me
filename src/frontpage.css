@@ -28,7 +28,8 @@ svg {
 }
 
 /* WAVES */
-#waves {
+#waves,
+#footer-svg {
   width: auto;
   height: 50%;
   position: absolute;
@@ -36,7 +37,7 @@ svg {
   bottom: 0;
   z-index: 1;
   box-sizing: border-box;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 [id^="wave-end"] {
@@ -47,7 +48,8 @@ svg {
   transition: opacity .3s ease-out;
 }
 
-#wavesGroup {
+#wavesGroup,
+#footerGroup {
   width: auto;
   z-index: 10;
 }

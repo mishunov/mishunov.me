@@ -35,9 +35,9 @@
       }
     </style>
     <iron-selector selected="[[page]]" attr-for-selected="name" role="navigation">
-      <a name="working" href="/working">Working</a>
-      <a name="speaking" href="/speaking">Speaking</a>
-      <a name="writing" href="/writing">Writing</a>
+      <a name="speaking" on-tap="handleClick" href="/speaking">Speaking</a>
+      <a name="writing" on-tap="handleClick" href="/writing">Writing</a>
+      <a name="working" on-tap="handleClick" href="/working">Working</a>
     </iron-selector>
   </template>
 
@@ -59,6 +59,18 @@
           }
         };
       }
+
+      handleClick(e) {
+        if (this.page !== 'home') {
+          return;
+        } else {
+          e.preventDefault();
+          e.stopPropagation();
+          const requestedPage = e.target.getAttribute('name');
+          this.dispatchEvent(new CustomEvent('navigation-from-home-requested', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
+        }
+      }
+
     }
 
     window.customElements.define(MyNavigation.is, MyNavigation);

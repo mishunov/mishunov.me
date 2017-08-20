@@ -68,7 +68,7 @@
       fallback-selection="view404"
       role="main">
 
-      <my-home name="home"></my-home>
+      <my-home id="home" name="home"></my-home>
       <my-working class="react-to-width" name="working"></my-working>
       <my-speaking class="react-to-width" name="speaking"></my-speaking>
       <my-writing class="react-to-width" name="writing"></my-writing>
@@ -121,6 +121,8 @@
       ready () {
         super.ready();
         this.addEventListener('dom-change', (e)=>this._domChange(e));
+        this.addEventListener('navigation-from-home-requested', (e)=>this._animateHomeNavigation(e));
+        this.addEventListener('frontpage-animation-to-nav-ended', (e)=>this._navigateFromHome(e));
       }
 
       _routePageChanged(page) {
@@ -130,7 +132,7 @@
       }
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        let resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
         Polymer.importHref(
           resolvedPageUrl,
           this._pageLoaded.bind(this),
@@ -172,6 +174,15 @@
             performance.mark(host.localName + '.domChange');
           }
         }
+      }
+
+      _navigateFromHome(e) {
+        /*window.history.pushState({}, null, '/' + e.detail.requested);
+        window.dispatchEvent(new CustomEvent('location-changed'));*/
+      }
+
+      _animateHomeNavigation(e) {
+        this.$.home.triggerPageNavigationAnimation(e.detail.requested);
       }
 
     }
