@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 
 <!--<link rel="import" href="shared-styles.html">-->
 <link type="script" rel="import" src="gsap/TweenLite.min.js">
@@ -141,52 +141,48 @@
 
 </dom-module>
 <script>
-  (function() {
-    'use strict';
-    Polymer({
+  class MyHome extends Polymer.Element {
+    static get is() { return 'my-home'; }
 
-      is: 'my-home',
+    _centerWaves() {
+      let circlesGroup = this.shadowRoot.getElementById('wavesGroup');
+      let footerGroup = this.shadowRoot.getElementById('footerGroup');
+      const circlesWidth = circlesGroup.getBoundingClientRect().width;
+      const viewport = document.documentElement.clientWidth;
+      const shift = circlesWidth - (circlesWidth / 2 + viewport / 2);
 
-      properties: {},
+      circlesGroup.style.left = footerGroup.style.left = '-' + shift + 'px';
+    }
 
-      _centerWaves: function() {
-        let circlesGroup = this.shadowRoot.getElementById('wavesGroup');
-        let footerGroup = this.shadowRoot.getElementById('footerGroup');
-        const circlesWidth = circlesGroup.getBoundingClientRect().width;
-        const viewport = document.documentElement.clientWidth;
-        const shift = circlesWidth - (circlesWidth / 2 + viewport / 2);
+    injectStyles(ev) {
+      const styles = ev.target.import.body.innerText;
+      const combo = styles + Polymer.StyleGather.cssFromModule('my-home');
+      Polymer.RenderStatus.afterNextRender(this, () => {
+        this.root.querySelector('style').textContent = combo;
+        this._centerWaves();
+      });
+    }
 
-        circlesGroup.style.left = footerGroup.style.left = '-' + shift + 'px';
-      },
+    ready() {
+      super.ready();
+      const resolvedPageUrl = this.resolveUrl('/src/frontpage.css');
+      Polymer.RenderStatus.afterNextRender(this, () => {
+        Polymer.importHref(
+            resolvedPageUrl,
+            this.injectStyles.bind(this),
+            null,
+            true);
+      });
+    }
 
-      injectStyles: function(ev) {
-        const styles = ev.target.import.body.innerText;
-        const combo = styles + Polymer.StyleGather.cssFromModule('my-home');
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          this.root.querySelector('style').textContent = combo;
-          this._centerWaves();
-        });
-      },
-
-      ready: function() {
-        const resolvedPageUrl = this.resolveUrl('/src/frontpage.css');
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          Polymer.importHref(
-              resolvedPageUrl,
-              this.injectStyles.bind(this),
-              null,
-              true);
-        });
-      },
-
-      _navigateToPage: function (requestedPage) {
+    _navigateToPage(requestedPage) {
 //        this.shadowRoot.getElementById('character').style.opacity = '0';
-        Polymer.RenderStatus.afterNextRender(this, function () {
-          this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
-        });
-      },
+      Polymer.RenderStatus.afterNextRender(this, function () {
+        this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
+      });
+    }
 
-      triggerPageNavigationAnimation: function(requestedPage) {
+    triggerPageNavigationAnimation(requestedPage) {
 //        const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
 //        const contours = this.shadowRoot.querySelectorAll('#character svg path');
 //        const picture = this.shadowRoot.querySelector('#character picture');
@@ -205,47 +201,49 @@
 //
 //        tl.play();
 
-        const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
-        const footer = this.shadowRoot.getElementById('footer');
-        const bgs = this.shadowRoot.querySelectorAll('[id^="bg-"]');
-        const requestedSection = this.shadowRoot.querySelector('g[id="' + requestedPage + '-layer"]');
-        const requestedIndex = (function (lrs) {
-          for (let i = 0, l = lrs.length; i < l; ++i) {
-            if (lrs[i] === requestedSection) {
-              return i;
-            }
+      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
+      const footer = this.shadowRoot.getElementById('footer');
+      const bgs = this.shadowRoot.querySelectorAll('[id^="bg-"]');
+      const requestedSection = this.shadowRoot.querySelector('g[id="' + requestedPage + '-layer"]');
+      const requestedIndex = (function (lrs) {
+        for (let i = 0, l = lrs.length; i < l; ++i) {
+          if (lrs[i] === requestedSection) {
+            return i;
           }
-        } )(layers);
-
-        this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = bgs[requestedIndex].getAttribute('fill');
-
-        const contours = this.shadowRoot.querySelectorAll('#character svg path');
-        const picture = this.shadowRoot.querySelector('#character picture');
-        const greeting = this.shadowRoot.getElementById('Frontpage');
-
-        let tl = new TimelineLite({
-          onComplete: function () {this._navigateToPage(requestedPage); },
-          onCompleteScope: this,
-          autoRemoveChildren: true,
-          paused: true
-        });
-        switch(requestedIndex) {
-          case 0:
-            tl.staggerTo([layers[1], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
-            break;
-          case 1:
-            tl.staggerTo([layers[0], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
-            break;
-          case 2:
-            tl.staggerTo([layers[0], layers[1]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
-            break;
         }
-        tl.to(this.shadowRoot.getElementById('waves'), 1, {transform: "translateY(-" + document.documentElement.clientHeight + "px", ease: Power4.easeIn}, "+= .5")
-          .to(picture, 1, {autoAlpha: 0})
-          .staggerTo(contours, 2, {drawSVG: "0%", ease: Power2.easeInOut}, "-=.5");
+      } )(layers);
 
-        tl.play();
+      this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = bgs[requestedIndex].getAttribute('fill');
+
+      const contours = this.shadowRoot.querySelectorAll('#character svg path');
+      const picture = this.shadowRoot.querySelector('#character picture');
+      const greeting = this.shadowRoot.getElementById('Frontpage');
+
+      let tl = new TimelineLite({
+        onComplete: function () {this._navigateToPage(requestedPage); },
+        onCompleteScope: this,
+        autoRemoveChildren: true,
+        paused: true
+      });
+      switch(requestedIndex) {
+        case 0:
+          tl.staggerTo([layers[1], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          break;
+        case 1:
+          tl.staggerTo([layers[0], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          break;
+        case 2:
+          tl.staggerTo([layers[0], layers[1]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          break;
       }
-    });
-  })();
+      tl.to(this.shadowRoot.getElementById('waves'), 1, {transform: "translateY(-" + document.documentElement.clientHeight + "px", ease: Power4.easeIn}, "+= .5")
+      .to(picture, 1, {autoAlpha: 0})
+      .staggerTo(contours, 2, {drawSVG: "0%", ease: Power2.easeInOut}, "-=.5");
+
+      tl.play();
+    }
+
+  }
+  customElements.define(MyHome.is, MyHome);
+
 </script>
