@@ -10,6 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
+<link rel="import" href="../bower_components/shadycss/apply-shim.html">
+
 <!-- shared styles for all views -->
 <dom-module id="shared-styles">
   <template>
@@ -27,6 +29,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-mobile-side-margin: 10%;
         --app-tablet-side-margin: 12%;
         --app-desktop-side-margin: 22.5%;
+
+
+        /* Shared styles for the header to be re-used where necessary*/
+        --app-header-height-mobile: 207px;
+        --app-header-height: 454px;
+
+        --app-header: {
+          background-position: 100% 100%;
+          background-repeat: repeat-x;
+          background-image: url('/images/header-bottom-mobile.png');
+        };
       }
       a {
         color: var(--app-primary-font-color);

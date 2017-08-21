@@ -26,9 +26,10 @@
         background-color: transparent;
         background-position: 100% 100%;
         background-repeat: repeat-x;
-        background-image: url('/images/header-bottom-mobile.png');
-        --iron-icon-width: 15px;
-        --iron-icon-height: 15px;
+        /*background-image: url('/images/header-bottom-mobile.png');*/
+        /*--iron-icon-width: 15px;*/
+        /*--iron-icon-height: 15px;*/
+        @apply --app-header;
       }
       :host:after {
         content: "";
@@ -55,7 +56,7 @@
         margin-bottom:.25em;
       }
       app-header {
-        height: 207px;
+        height: var(--app-header-height-mobile);
         position: relative;
         z-index: 2;
       }
@@ -94,7 +95,7 @@
           background-image: url('/images/dashed-border.svg');
         }
         app-header {
-          height: 454px;
+          height: var(--app-header-height);
         }
         app-toolbar {
           height: 47px;

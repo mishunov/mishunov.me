@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
-<!--<link rel="import" href="shared-styles.html">-->
 <link type="script" rel="import" src="gsap/TweenLite.min.js">
 <link type="script" rel="import" src="gsap/TimelineLite.min.js">
 <link type="script" rel="import" src="gsap/CSSPlugin.min.js">
@@ -8,12 +7,11 @@
 <link type="script" rel="import" src="gsap/MorphSVGPlugin.min.js">
 <link type="script" rel="import" src="gsap/DrawSVGPlugin.min.js">
 
-
-<link rel="import" href="animatable-behavior.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id=my-home>
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
         position: absolute;
@@ -33,9 +31,6 @@
       #circles {
         visibility: hidden;
       }
-      /*#character {*/
-        /*transition: opacity 3s easeIn;*/
-      /*}*/
       #character svg {
         position: absolute;
         top: 0;
@@ -52,28 +47,36 @@
         height: 100vh;
         right: 0;
         bottom: -100vh;
+        background-position: 100% 100%;
+        background-repeat: repeat-x;
+        background-image: url('/images/header-bottom-mobile.png');
+        @apply --app-header;
       }
-      @media screen and (orientation: landscape) {
-        #navigationBackdrop {
-          width: 100vw;
-          height: 100vw;
-          margin-left: -50vw;
-          margin-top: -50vw;
-        }
-      }
-      @media screen and (orientation: portrait) {
-        #navigationBackdrop {
-          width: 100vh;
-          height: 100vh;
-          margin-left: -50vh;
-          margin-top: -50vh;
-        }
+      #transitionBackdrop:after {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;
+        background-size: cover;
+
+        height: var(--app-header-height-mobile);
       }
 
 
       @media screen and (min-width: 768px) {
         :host {
           padding-top: 140px;
+        }
+        #transitionBackdrop {
+          background-image: url('/images/header-bottom.png');
+        }
+        #transitionBackdrop:after {
+          background-image: url('/images/dashed-border.svg');
+          height: var(--app-header-height);
         }
       }
       @media screen and (min-width: 1024px) and (orientation: landscape) {
@@ -144,27 +147,62 @@
   class MyHome extends Polymer.Element {
     static get is() { return 'my-home'; }
 
-    _centerWaves() {
-      let circlesGroup = this.shadowRoot.getElementById('wavesGroup');
-      let footerGroup = this.shadowRoot.getElementById('footerGroup');
-      const circlesWidth = circlesGroup.getBoundingClientRect().width;
-      const viewport = document.documentElement.clientWidth;
-      const shift = circlesWidth - (circlesWidth / 2 + viewport / 2);
-
-      circlesGroup.style.left = footerGroup.style.left = '-' + shift + 'px';
-    }
-
-    injectStyles(ev) {
-      const styles = ev.target.import.body.innerText;
-      const combo = styles + Polymer.StyleGather.cssFromModule('my-home');
-      Polymer.RenderStatus.afterNextRender(this, () => {
-        this.root.querySelector('style').textContent = combo;
-        this._centerWaves();
-      });
+    static get properties() {
+      return {
+        animationConfig: {
+          value: function () {
+            let headerHeight = (() => {
+              let height = ShadyCSS? ShadyCSS.getComputedStyleValue(this, '--app-header-height-mobile'): getComputedStyle(this, '--app-header-height-mobile');
+              if (document.documentElement.clientWidth >= 768 ) {
+                height = ShadyCSS? ShadyCSS.getComputedStyleValue(this, '--app-header-height'): getComputedStyle(this, '--app-header-height');
+              }
+              return height;
+            })();
+            return {
+              "dissolveWaves": {
+                "keyframes": [
+                  {opacity: 1},
+                  {opacity: 0}
+                ],
+                "options": {
+                  duration: 500,
+                  easing: "ease-out",
+                  fill: "forwards"
+                }
+              },
+              "moveWaves": {
+                "keyframes": [
+                  {transform: 'translateY(0)'},
+                  {transform: 'translateY(-' + (document.documentElement.clientHeight * 2 - parseInt(headerHeight)) + 'px)'}
+                ],
+                "options": {
+                  duration: 1000,
+                  easing: "ease-in",
+                  delay: 500,
+                  fill: "forwards"
+                }
+              },
+              "dissolvePicture": {
+                "keyframes": [
+                  {opacity: 1},
+                  {opacity: 0}
+                ],
+                "options": {
+                  duration: 1000,
+                  easing: 'ease-out',
+                  delay: 1000,
+                  fill: "forwards"
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     ready() {
       super.ready();
+
       const resolvedPageUrl = this.resolveUrl('/src/frontpage.css');
       Polymer.RenderStatus.afterNextRender(this, () => {
         Polymer.importHref(
@@ -174,6 +212,26 @@
             true);
       });
     }
+
+    injectStyles(ev) {
+      const styles = ev.target.import.body.innerText;
+      const combo = styles + Polymer.StyleGather.cssFromModule('my-home');
+      Polymer.RenderStatus.afterNextRender(this, () => {
+        this.root.querySelector('style').textContent = combo;
+        this.__centerWaves();
+      });
+    }
+
+    __centerWaves() {
+      let circlesGroup = this.shadowRoot.getElementById('wavesGroup');
+      let footerGroup = this.shadowRoot.getElementById('footerGroup');
+      const circlesWidth = circlesGroup.getBoundingClientRect().width;
+      const viewport = document.documentElement.clientWidth;
+      const shift = circlesWidth - (circlesWidth / 2 + viewport / 2);
+
+      circlesGroup.style.left = footerGroup.style.left = '-' + shift + 'px';
+    }
+
 
     _navigateToPage(requestedPage) {
 //        this.shadowRoot.getElementById('character').style.opacity = '0';
@@ -219,28 +277,33 @@
       const picture = this.shadowRoot.querySelector('#character picture');
       const greeting = this.shadowRoot.getElementById('Frontpage');
 
-      let tl = new TimelineLite({
-        onComplete: function () {this._navigateToPage(requestedPage); },
-        onCompleteScope: this,
-        autoRemoveChildren: true,
-        paused: true
-      });
+
       switch(requestedIndex) {
         case 0:
-          tl.staggerTo([layers[1], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          layers[1].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          layers[2].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
           break;
         case 1:
-          tl.staggerTo([layers[0], layers[2]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          layers[0].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          layers[2].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
           break;
         case 2:
-          tl.staggerTo([layers[0], layers[1]], .5, {autoAlpha: 0, ease: Power2.easeOut}, .3);
+          layers[0].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          layers[1].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
           break;
       }
-      tl.to(this.shadowRoot.getElementById('waves'), 1, {transform: "translateY(-" + document.documentElement.clientHeight + "px", ease: Power4.easeIn}, "+= .5")
-      .to(picture, 1, {autoAlpha: 0})
-      .staggerTo(contours, 2, {drawSVG: "0%", ease: Power2.easeInOut}, "-=.5");
 
-      tl.play();
+      this.shadowRoot.getElementById('waves').animate(this.animationConfig.moveWaves.keyframes, this.animationConfig.moveWaves.options);
+      picture.animate(this.animationConfig.dissolvePicture.keyframes, this.animationConfig.dissolvePicture.options);
+
+      let tl = new TimelineLite({
+        onComplete: function() {
+          this._navigateToPage(requestedPage);
+        },
+        onCompleteScope: this,
+        autoRemoveChildren: true
+      });
+      tl.staggerTo(contours, 2, {drawSVG: "0%", ease: Power2.easeInOut, delay: 1.7});
     }
 
   }
