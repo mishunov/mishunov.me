@@ -27,7 +27,7 @@
   <script src="src/gsap/MorphSVGPlugin.min.js"></script>
   <link rel="stylesheet" href="src/frontpage.css">
 </head>
-<body>
+<body class="unresolved">
 <style>
   html, body {
     height: 100%;
@@ -72,6 +72,10 @@
     text-decoration: none;
     padding: 0;
     margin: 0;
+  }
+  .unresolved #character,
+  .unresolved #waves {
+    visibility: hidden;
   }
   @media screen and (min-width: 600px) {
     body {
@@ -172,7 +176,10 @@
 
   (function () {
     MorphSVGPlugin.convertToPath("circle");
-    let tl = new TimelineLite({onComplete:dissolveSplashScreen}),
+    let tl = new TimelineLite({
+          onComplete:dissolveSplashScreen,
+          paused: true
+        }),
         circles = document.querySelectorAll('path[id^="circle"]'),
         initLines = document.querySelectorAll('[id^="wave-init"]'),
         startLines = document.querySelectorAll('[id^="wave-start"]'),
@@ -194,7 +201,10 @@
     .to("#mouth-closed-nasolabial-right", .7, {morphSVG: "#mouth-end-nasolabial-right", ease:  Power1.easeOut}, "-=1.5")
     .to('#mouth-closed', 0, {opacity: 0}, "-=1.2")
     .to('#mouth-end', 0, {opacity: 1}, "-=1.2")
-    .to('#host', 1, {opacity: 0});
+    .to('#host', .5, {opacity: 0}, "-=1");
+
+    document.body.removeAttribute('class');
+    tl.play();
   })();
 
 </script>
