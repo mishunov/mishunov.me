@@ -4,27 +4,14 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-  <script>
-    /**
-     * [polymer-root-path]
-     *
-     * By default, we set `Polymer.rootPath` to the server root path (`/`).
-     * Leave this line unchanged if you intend to serve your app from the root
-     * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
-     *
-     * If you intend to serve your app from a non-root path (e.g., with URLs
-     * like `my.domain/my-app/` and `my.domain/my-app/view1`), edit this line
-     * to indicate the path from which you'll be serving, including leading
-     * and trailing slashes (e.g., `/my-app/`).
-     */
-    window.Polymer = {rootPath: '/'};
-  </script>
+  <script>window.Polymer = {rootPath: '/'};</script>
 
   <script src="src/gsap/TweenLite.min.js"></script>
   <script src="src/gsap/TimelineLite.min.js"></script>
   <script src="src/gsap/CSSPlugin.min.js"></script>
   <script src="src/gsap/EasePack.min.js"></script>
   <script src="src/gsap/MorphSVGPlugin.min.js"></script>
+  <script src="src/gsap/DrawSVGPlugin.min.js"></script>
   <link rel="stylesheet" href="src/frontpage.css">
 </head>
 <body class="unresolved">
@@ -73,10 +60,13 @@
     padding: 0;
     margin: 0;
   }
-  .unresolved #character,
-  .unresolved #waves {
+  .unresolved #host {
     visibility: hidden;
   }
+  /*.unresolved #character,*/
+  /*.unresolved #waves {*/
+    /*visibility: hidden;*/
+  /*}*/
   @media screen and (min-width: 600px) {
     body {
       font-size: 15px;
@@ -160,6 +150,7 @@
 
 <mishunov-app></mishunov-app>
 <script>
+
   function centerWaves() {
     const circlesGroup = document.getElementById('wavesGroup');
     const circlesWidth = circlesGroup.getBoundingClientRect().width;
@@ -172,19 +163,21 @@
     document.getElementById('host').remove();
   }
 
-  centerWaves();
+  function runIntroAnimation() {
+    centerWaves();
 
-  (function () {
     MorphSVGPlugin.convertToPath("circle");
     let tl = new TimelineLite({
-          onComplete:dissolveSplashScreen,
-          paused: true
+          onComplete:dissolveSplashScreen
         }),
         circles = document.querySelectorAll('path[id^="circle"]'),
         initLines = document.querySelectorAll('[id^="wave-init"]'),
         startLines = document.querySelectorAll('[id^="wave-start"]'),
         endLines = document.querySelectorAll('[id^="wave-end"]'),
         bgs = document.querySelectorAll('[id^="bg-end"]');
+
+    document.body.removeAttribute('class');
+    window.performance && performance.mark && performance.mark('intro animation start');
 
     tl.staggerFrom(circles, .6, {scale: 0, transformOrigin: "50% 50%", ease: Bounce.easeOut, delay: 1}, .3)
     .staggerTo(circles, .3, {scale: 0, transformOrigin: "50% 50%"})
@@ -203,12 +196,32 @@
     .to('#mouth-end', 0, {opacity: 1}, "-=1.2")
     .to('#host', .5, {opacity: 0}, "-=1");
 
-    document.body.removeAttribute('class');
-    tl.play();
-  })();
+//    tl.play();
+  }
+
+  // Run intro animation only if we are on the root
+  if (window.location.pathname === '/') {
+    runIntroAnimation();
+  } else {
+
+  }
+
+//  let plugins = com.greensock.plugins;
+//  Object.getOwnPropertyNames(plugins).forEach(
+//      function (val) {
+//        console.log(val);
+//      }
+//  );
+  //        var eases = com.greensock.easing;
+  //        Object.getOwnPropertyNames(eases).forEach(
+  //            function (val) {
+  //              console.log(val);
+  //            }
+  //        );
 
 </script>
-<script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+
+<script async defer src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 <link rel="import" href="/src/mishunov-app.html">
 
 <script>

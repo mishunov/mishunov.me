@@ -55,7 +55,7 @@
       tail="{{subroute}}"></app-route>
 
 
-    <my-header class="react-to-width" page="[[page]]" role="navigation"></my-header>
+    <my-header id="header" class="react-to-width" page="[[page]]" role="navigation"></my-header>
 
 
     <iron-pages
@@ -97,7 +97,7 @@
           },
           routeData: Object,
           subroute: String,
-          // This shouldn't be neccessary, but the Analyzer isn't picking up
+          // This shouldn't be necessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
           rootPath: String
         };
@@ -118,7 +118,6 @@
         super.ready();
         this.addEventListener('dom-change', (e)=>this._domChange(e));
         this.addEventListener('navigation-from-home-requested', (e)=>this._animateHomeNavigation(e));
-        this.addEventListener('frontpage-animation-to-nav-ended', (e)=>this._navigateFromHome(e));
       }
 
       _routePageChanged(page) {
@@ -172,13 +171,23 @@
         }
       }
 
-      _navigateFromHome(e) {
-        /*window.history.pushState({}, null, '/' + e.detail.requested);
-        window.dispatchEvent(new CustomEvent('location-changed'));*/
+      navigateFromHome(requested) {
+        window.history.pushState({}, null, '/' + requested);
+        // `location-changed` – event to communicate to <app-location>
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
 
       _animateHomeNavigation(e) {
-        this.$.home.triggerPageNavigationAnimation(e.detail.requested);
+        const requested = e.detail.requested;
+        const pageKeyframes = this.$.home.triggerPageNavigationAnimation(requested);
+        const headerKeyframes = this.$.header.navigateFromHomepageAnimation(requested);
+        const animGroup = new GroupEffect([pageKeyframes, headerKeyframes]);
+
+        const anim = document.timeline.play(animGroup);
+
+        anim.onfinish = (e) => {
+          this.navigateFromHome(requested);
+        };
       }
 
     }

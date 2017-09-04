@@ -1,12 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 
-<link type="script" rel="import" src="gsap/TweenLite.min.js">
-<link type="script" rel="import" src="gsap/TimelineLite.min.js">
-<link type="script" rel="import" src="gsap/CSSPlugin.min.js">
-<link type="script" rel="import" src="gsap/EasePack.min.js">
-<link type="script" rel="import" src="gsap/MorphSVGPlugin.min.js">
-<link type="script" rel="import" src="gsap/DrawSVGPlugin.min.js">
-
 <link rel="import" href="shared-styles.html">
 
 <dom-module id=my-home>
@@ -91,6 +84,14 @@
         }*/
       }
 
+
+      /* Animation styles */
+      g[id$="-layer"] {
+        transition: opacity .5s ease-out;
+      }
+      #waves {
+        transition: transform 1s ease-in-out .5s; /* we should really employ JS events for figuring out when to start the transition */
+      }
     </style>
 
     <div id="intro" class="svg-container">
@@ -178,7 +179,6 @@
                 "options": {
                   duration: 1000,
                   easing: "ease-in-out",
-                  delay: 500,
                   fill: "forwards"
                 }
               },
@@ -188,9 +188,8 @@
                   {opacity: 0}
                 ],
                 "options": {
-                  duration: 1000,
-                  easing: 'ease-out',
-                  delay: 700,
+                  duration: 500,
+                  easing: 'ease-in',
                   fill: "forwards"
                 }
               }
@@ -233,32 +232,13 @@
     }
 
 
-    _navigateToPage(requestedPage) {
-//        this.shadowRoot.getElementById('character').style.opacity = '0';
-      Polymer.RenderStatus.afterNextRender(this, function () {
-        this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
-      });
-    }
+//    _navigateToPage(requestedPage) {
+//      Polymer.RenderStatus.afterNextRender(this, function () {
+//        this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
+//      });
+//    }
 
     triggerPageNavigationAnimation(requestedPage) {
-//        const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
-//        const contours = this.shadowRoot.querySelectorAll('#character svg path');
-//        const picture = this.shadowRoot.querySelector('#character picture');
-//        const greeting = this.shadowRoot.getElementById('Frontpage');
-//
-//        let tl = new TimelineLite({
-//          onComplete: function () {this._navigateToPage(requestedPage); },
-//          onCompleteScope: this,
-//          autoRemoveChildren: true,
-//          paused: true
-//        });
-//        tl.to(greeting, .5, {scaleY: 0, ease: Back.easeInOut, transformOrigin: "50% 50%"})
-//          .to(layers, .5, {autoAlpha: 0})
-//          .to(picture, 1, {autoAlpha: 0}, "-=.5")
-//          .staggerTo(contours, 2, {drawSVG: "0%", ease: Power1.easeIn}, .3);
-//
-//        tl.play();
-
       const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
       const footer = this.shadowRoot.getElementById('footer');
       const bgs = this.shadowRoot.querySelectorAll('[id^="bg-"]');
@@ -270,40 +250,46 @@
           }
         }
       } )(layers);
-
       this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = bgs[requestedIndex].getAttribute('fill');
 
-      const contours = this.shadowRoot.querySelectorAll('#character svg path');
-      const picture = this.shadowRoot.querySelector('#character picture');
-      const greeting = this.shadowRoot.getElementById('Frontpage');
+      return this.exitAnimation(requestedIndex);
+    }
 
+    exitAnimation(requestedIndex) {
+      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
+      const picture = this.shadowRoot.querySelector('#character picture');
+      const timings = this.animationConfig.dissolveWaves.options;
+      const keyframes = this.animationConfig.dissolveWaves.keyframes;
+      const moveEffect = new KeyframeEffect(this.shadowRoot.getElementById('waves'), this.animationConfig.moveWaves.keyframes, this.animationConfig.moveWaves.options);
+      const pictureEffect = new KeyframeEffect(picture, this.animationConfig.dissolvePicture.keyframes, this.animationConfig.dissolvePicture.options);
+
+      let dissolveEffects;
 
       switch(requestedIndex) {
         case 0:
-          layers[1].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
-          layers[2].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          dissolveEffects = [
+            new KeyframeEffect(layers[1], keyframes, timings),
+            new KeyframeEffect(layers[2], keyframes, timings),
+          ];
           break;
         case 1:
-          layers[0].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
-          layers[2].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          dissolveEffects = [
+            new KeyframeEffect(layers[0], keyframes, timings),
+            new KeyframeEffect(layers[2], keyframes, timings),
+          ];
           break;
         case 2:
-          layers[0].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
-          layers[1].animate(this.animationConfig.dissolveWaves.keyframes, this.animationConfig.dissolveWaves.options);
+          dissolveEffects = [
+            new KeyframeEffect(layers[0], keyframes, timings),
+            new KeyframeEffect(layers[1], keyframes, timings),
+          ];
           break;
       }
 
-      this.shadowRoot.getElementById('waves').animate(this.animationConfig.moveWaves.keyframes, this.animationConfig.moveWaves.options);
-      picture.animate(this.animationConfig.dissolvePicture.keyframes, this.animationConfig.dissolvePicture.options);
+      const groupDissolveAnimation = new GroupEffect(dissolveEffects);
+      const groupMoveAnimation = new GroupEffect([pictureEffect, moveEffect]);
 
-//      let tl = new TimelineLite({
-//        onComplete: function() {
-//          this._navigateToPage(requestedPage);
-//        },
-//        onCompleteScope: this,
-//        autoRemoveChildren: true
-//      });
-//      tl.staggerTo(contours, 2, {drawSVG: "0%", ease: Power2.easeInOut, delay: 1.7});
+      return new SequenceEffect([groupDissolveAnimation, groupMoveAnimation]);
     }
 
   }

@@ -11,6 +11,11 @@
         display: block;
         font-size: 10px;
         margin-right: -1.2em;
+        --my-navigation-anchors-color: var(--app-primary-font-color);
+      }
+      :host([page="working"]),
+      :host([page="writing"]) {
+        --my-navigation-anchors-color: var(--app-alt-font-color);
       }
       a {
         font-weight: bold;
@@ -18,10 +23,8 @@
         padding: 0 1.2em;
         line-height: 36px;
         display: inline-block;
-      }
-      :host([page="working"]) a,
-      :host([page="writing"]) a {
-        color: var(--app-alt-font-color);
+        color: var(--my-navigation-anchors-color);
+        /*transition: color .5s .7s linear;*/
       }
       @media screen and (min-width: 768px) {
         :host {
@@ -34,7 +37,7 @@
         }
       }
     </style>
-    <iron-selector selected="[[page]]" attr-for-selected="name" role="navigation">
+    <iron-selector id="selector" selected="[[page]]" attr-for-selected="name" role="navigation">
       <a name="speaking" on-tap="handleClick" href="/speaking">Speaking</a>
       <a name="writing" on-tap="handleClick" href="/writing">Writing</a>
       <a name="working" on-tap="handleClick" href="/working">Working</a>
@@ -58,6 +61,25 @@
             reflectToAttribute: true
           }
         };
+      }
+
+      animateTransitionFromHome(requestedPage) {
+        const reversedColor = requestedPage === 'working' || requestedPage === 'writing'? '#fff': '#000';
+        const timing = {
+          duration: 500,
+          easing: 'ease-out',
+          delay: 700,
+          fill: "forwards"
+        };
+
+        const moveKeyframesEffect = new KeyframeEffect(this, {
+          "transform": [this.style.getPropertyValue('transform'), "translateX(0px)"]
+        }, timing);
+        const colorKeyframesEffect = new KeyframeEffect(this, {
+          "--my-navigation-anchors-color": ['#000', reversedColor]
+        }, timing);
+
+        return new GroupEffect([moveKeyframesEffect, colorKeyframesEffect]);
       }
 
       handleClick(e) {

@@ -22,15 +22,24 @@
         margin: 0 0 48px;
         padding: 0;
         position: relative;
-        transition: background-color .3s ease-out;
         background-color: transparent;
         background-position: 100% 100%;
         background-repeat: repeat-x;
+        --my-navigation-anchors-color: var(--app-primary-font-color);
         /*background-image: url('/images/header-bottom-mobile.png');*/
         /*--iron-icon-width: 15px;*/
         /*--iron-icon-height: 15px;*/
         @apply --app-header;
       }
+      :host([page="working"]),
+      :host([page="writing"]) {
+        --my-navigation-anchors-color: var(--app-alt-font-color);
+      }
+      /*:host([page="working"]),*/
+      /*:host([page="writing"]),*/
+      /*:host([page="speaking"]) {*/
+        /*transition: background-color .3s ease-out;*/
+      /*}*/
       :host:after {
         content: "";
         display: block;
@@ -51,6 +60,7 @@
         font-family: "Oneday Condensed", serif;
         font-size: 22px;
         line-height: 36px;
+        color: var(--my-navigation-anchors-color);
       }
       [main-title] iron-icon {
         margin-bottom:.25em;
@@ -71,9 +81,7 @@
       ** Sections
       */
       :host([page="working"]),
-      :host([page="writing"]),
-      :host([page="working"]) a,
-      :host([page="writing"]) a {
+      :host([page="writing"]) {
         color: var(--app-alt-font-color);
       }
       :host([page="speaking"]) {
@@ -134,18 +142,18 @@
       :host([page="home"]) app-header {
         height: auto;
       }
-      :host([page="home"]) app-toolbar {
-        @apply --layout-center-justified;
-      }
+      /*:host([page="home"]) app-toolbar {*/
+        /*@apply --layout-center-justified;*/
+      /*}*/
     </style>
 
-    <app-header reveal>
+    <app-header id="header" reveal>
       <app-toolbar>
         <div main-title hidden="[[isHomePage]]">
           <a class="hide-on-mobile" href="/" aria-label="Go Home :)">Denys Mishunov</a>
           <a class="show-on-mobile" name="home" href="/" title="Go home :)"><iron-icon icon="home"></iron-icon></a>
         </div>
-        <my-navigation page="[[page]]"></my-navigation>
+        <my-navigation id="nav" page="[[page]]"></my-navigation>
       </app-toolbar>
       <my-section-title page="[[page]]" hidden="[[isHomePage]]"></my-section-title>
 
@@ -163,7 +171,8 @@
         return {
           page: {
             type: String,
-            reflectToAttribute: true
+            reflectToAttribute: true,
+            observer: '_pageIsSet'
           },
           isHomePage: {
             type: Boolean,
@@ -173,6 +182,30 @@
       }
       _isHomePage(page) {
         return page === 'home' || false;
+      }
+
+      _pageIsSet(newPage) {
+        if (newPage === 'home') {
+          const header = this.shadowRoot.getElementById('header');
+          const nav = this.shadowRoot.getElementById('nav');
+
+          const rectHeader = header.getBoundingClientRect();
+          const rectNav = nav.getBoundingClientRect();
+          const shift = (rectNav.left - rectHeader.left)/2;
+
+          nav.style.setProperty('transform', `translateX(-${shift}px)`);
+        }
+      }
+
+      navigateFromHomepageAnimation(requestedPage) {
+        const nav = this.shadowRoot.getElementById('nav');
+//        const character = this.shadowRoot.getElementById('character');
+
+//        const navPlay = nav.animateTransitionFromHome(requestedPage);
+//        navPlay.onfinish = () => {
+//          character.animateCharacter();
+//        };
+        return nav.animateTransitionFromHome(requestedPage);
       }
     }
     customElements.define(MyHeader.is, MyHeader);
