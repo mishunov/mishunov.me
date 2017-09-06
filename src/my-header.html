@@ -25,6 +25,7 @@
         background-color: transparent;
         background-position: 100% 100%;
         background-repeat: repeat-x;
+        /*transition: background-color .3s ease-out;*/
         --my-navigation-anchors-color: var(--app-primary-font-color);
         /*background-image: url('/images/header-bottom-mobile.png');*/
         /*--iron-icon-width: 15px;*/
@@ -35,11 +36,9 @@
       :host([page="writing"]) {
         --my-navigation-anchors-color: var(--app-alt-font-color);
       }
-      /*:host([page="working"]),*/
-      /*:host([page="writing"]),*/
-      /*:host([page="speaking"]) {*/
-        /*transition: background-color .3s ease-out;*/
-      /*}*/
+      :host([no-transition]) {
+        transition: none;
+      }
       :host:after {
         content: "";
         display: block;
@@ -84,15 +83,15 @@
       :host([page="writing"]) {
         color: var(--app-alt-font-color);
       }
-      :host([page="speaking"]) {
-        background-color: var(--app-lime-color);
-      }
-      :host([page="working"]) {
-        background-color: var(--app-blue-color);
-      }
-      :host([page="writing"]) {
-        background-color: var(--app-green-color);
-      }
+      /*:host([page="speaking"]) {*/
+        /*background-color: var(--app-lime-color);*/
+      /*}*/
+      /*:host([page="working"]) {*/
+        /*background-color: var(--app-blue-color);*/
+      /*}*/
+      /*:host([page="writing"]) {*/
+        /*background-color: var(--app-green-color);*/
+      /*}*/
       /* end Sections */
 
       @media screen and (min-width: 768px) {
@@ -150,8 +149,8 @@
     <app-header id="header" reveal>
       <app-toolbar>
         <div main-title hidden="[[isHomePage]]">
-          <a class="hide-on-mobile" href="/" aria-label="Go Home :)">Denys Mishunov</a>
-          <a class="show-on-mobile" name="home" href="/" title="Go home :)"><iron-icon icon="home"></iron-icon></a>
+          <a class="hide-on-mobile" href="/" aria-label="Go Home :)" on-click="handleClick">Denys Mishunov</a>
+          <a class="show-on-mobile" name="home" href="/" title="Go home :)" on-click="handleClick"><iron-icon icon="home"></iron-icon></a>
         </div>
         <my-navigation id="nav" page="[[page]]"></my-navigation>
       </app-toolbar>
@@ -159,6 +158,7 @@
 
       <template is="dom-if" if="[[!isHomePage]]">
         <my-character id="character" page="[[page]]"></my-character>
+        <!--<my-character id="character"></my-character>-->
       </template>
     </app-header>
 
@@ -184,7 +184,7 @@
         return page === 'home' || false;
       }
 
-      _pageIsSet(newPage) {
+      _pageIsSet(newPage, oldPage) {
         if (newPage === 'home') {
           const header = this.shadowRoot.getElementById('header');
           const nav = this.shadowRoot.getElementById('nav');
@@ -193,19 +193,47 @@
           const rectNav = nav.getBoundingClientRect();
           const shift = (rectNav.left - rectHeader.left)/2;
 
-          nav.style.setProperty('transform', `translateX(-${shift}px)`);
+          if (shift !== 0) {
+            nav.style.setProperty('transform', `translateX(${shift * -1}px)`);
+          }
+        } else if(!oldPage || oldPage === 'home') {
+          this.style.setProperty('background-color', this.__getSectionsColor(newPage));
         }
+      }
+
+      __getSectionsColor(section) {
+        return section === 'working' && getComputedStyle(this).getPropertyValue("--app-blue-color") ||
+            section === 'writing' && getComputedStyle(this).getPropertyValue("--app-green-color") ||
+            section === 'speaking' && getComputedStyle(this).getPropertyValue("--app-lime-color") ||
+            section === 'home' && 'transparent';
       }
 
       navigateFromHomepageAnimation(requestedPage) {
         const nav = this.shadowRoot.getElementById('nav');
-//        const character = this.shadowRoot.getElementById('character');
-
-//        const navPlay = nav.animateTransitionFromHome(requestedPage);
-//        navPlay.onfinish = () => {
-//          character.animateCharacter();
-//        };
         return nav.animateTransitionFromHome(requestedPage);
+      }
+
+      navigateToHomepageAnimation() {
+        const nav = this.shadowRoot.getElementById('nav');
+        return nav.animateTransitionToHome();
+      }
+
+      _transitionBgColor(requestedPage) {
+        const targetBg = this.__getSectionsColor(requestedPage);
+        return TweenLite.to(this, 1, {
+          backgroundColor: targetBg.trim(),
+          ease: Power1.easeOut
+        });
+      }
+
+      navigateBetweenPagesAnimation(requestedPage) {
+        return this._transitionBgColor(requestedPage);
+      }
+
+      handleClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.dispatchEvent(new CustomEvent('navigation-to-home-requested', {bubbles: true, composed: true}));
       }
     }
     customElements.define(MyHeader.is, MyHeader);

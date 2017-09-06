@@ -82,15 +82,36 @@
         return new GroupEffect([moveKeyframesEffect, colorKeyframesEffect]);
       }
 
+      animateTransitionToHome() {
+        const timing = {
+          duration: 300,
+          easing: 'ease-out',
+          fill: "forwards"
+        };
+
+        debugger;
+
+        const moveKeyframesEffect = new KeyframeEffect(this, {
+          "transform": [this.style.getPropertyValue('transform'), "translateX(0px)"]
+        }, timing);
+        const colorKeyframesEffect = new KeyframeEffect(this, {
+          "--my-navigation-anchors-color": ['#000', reversedColor]
+        }, timing);
+
+        return new GroupEffect([moveKeyframesEffect, colorKeyframesEffect]);
+      }
+
       handleClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const requestedPage = e.target.getAttribute('name');
+        let eventType;
         if (this.page !== 'home') {
-          return;
+          eventType = 'navigation-between-pages-requested';
         } else {
-          e.preventDefault();
-          e.stopPropagation();
-          const requestedPage = e.target.getAttribute('name');
-          this.dispatchEvent(new CustomEvent('navigation-from-home-requested', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
+          eventType = 'navigation-from-home-requested';
         }
+        this.dispatchEvent(new CustomEvent(eventType, {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
       }
 
     }

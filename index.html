@@ -12,6 +12,7 @@
   <script src="src/gsap/EasePack.min.js"></script>
   <script src="src/gsap/MorphSVGPlugin.min.js"></script>
   <script src="src/gsap/DrawSVGPlugin.min.js"></script>
+  <script src="src/gsap/TextPlugin.min.js"></script>
   <link rel="stylesheet" href="src/frontpage.css">
 </head>
 <body class="unresolved">
@@ -148,7 +149,7 @@
 </div>
 </div>
 
-<mishunov-app></mishunov-app>
+<mishunov-app id="app" unresolved></mishunov-app>
 <script>
 
   function centerWaves() {
@@ -160,6 +161,15 @@
     circlesGroup.style.left = "-" + shift + "px";
   }
   function dissolveSplashScreen() {
+//    const app = document.getElementById('app');
+//    if(!app.hasAttribute('unresolved')) {
+//      document.getElementById('host').remove();
+//      window.clearTimeout(window.timeoutID);
+//    } else {
+//      window.timeoutID = window.setTimeout(function () {
+//        dissolveSplashScreen();
+//      }, 500);
+//    }
     document.getElementById('host').remove();
   }
 
@@ -195,8 +205,6 @@
     .to('#mouth-closed', 0, {opacity: 0}, "-=1.2")
     .to('#mouth-end', 0, {opacity: 1}, "-=1.2")
     .to('#host', .5, {opacity: 0}, "-=1");
-
-//    tl.play();
   }
 
   // Run intro animation only if we are on the root
@@ -205,20 +213,6 @@
   } else {
 
   }
-
-//  let plugins = com.greensock.plugins;
-//  Object.getOwnPropertyNames(plugins).forEach(
-//      function (val) {
-//        console.log(val);
-//      }
-//  );
-  //        var eases = com.greensock.easing;
-  //        Object.getOwnPropertyNames(eases).forEach(
-  //            function (val) {
-  //              console.log(val);
-  //            }
-  //        );
-
 </script>
 
 <script async defer src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>

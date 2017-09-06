@@ -84,7 +84,8 @@
 
     <h1>
       <span>sometimes I</span>
-      <span>[[__computeSectionTitle(page)]]</span>
+      <!--<span id="title">[[__computeSectionTitle(page)]]</span>-->
+      <span id="title"></span>
     </h1>
     
   </template>
@@ -101,9 +102,17 @@
 
       static get properties() {
         return {
-          page: String
+          page: {
+            type: String,
+            observer: 'tweenSectionsTitle'
+          }
         };
       }
+
+      ready() {
+        super.ready();
+      }
+
       __computeSectionTitle(page) {
         var title = 'Do nothing :)';
         if (page) {
@@ -120,6 +129,10 @@
           }
         }
         return title;
+      }
+
+      tweenSectionsTitle() {
+        TweenLite.to(this.$.title, 1, {text: this.__computeSectionTitle(this.page), ease:Power4.easeOut});
       }
     }
 

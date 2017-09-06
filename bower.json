@@ -15,7 +15,7 @@
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
-    "iron-pages": "^2.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
     "iron-location": "^2.0.1",
     "app-layout": "^2.0.1"
   },

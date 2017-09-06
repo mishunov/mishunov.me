@@ -64,7 +64,7 @@
       fallback-selection="view404"
       role="main">
 
-      <my-home id="home" name="home"></my-home>
+      <my-home id="home" name="home" on-homepage-ready="_notifyReadines"></my-home>
       <my-working class="react-to-width" name="working"></my-working>
       <my-speaking class="react-to-width" name="speaking"></my-speaking>
       <my-writing class="react-to-width" name="writing"></my-writing>
@@ -117,7 +117,13 @@
       ready () {
         super.ready();
         this.addEventListener('dom-change', (e)=>this._domChange(e));
-        this.addEventListener('navigation-from-home-requested', (e)=>this._animateHomeNavigation(e));
+        this.addEventListener('navigation-to-home-requested', (e)=>this._animateToHomeNavigation(e));
+        this.addEventListener('navigation-from-home-requested', (e)=>this._animateFromHomeNavigation(e));
+        this.addEventListener('navigation-between-pages-requested', (e)=>this._animateBetweenPagesNavigation(e));
+      }
+
+      _notifyReadines() {
+        this.removeAttribute('unresolved');
       }
 
       _routePageChanged(page) {
@@ -171,13 +177,30 @@
         }
       }
 
-      navigateFromHome(requested) {
+      navigateToAPage(requested) {
         window.history.pushState({}, null, '/' + requested);
         // `location-changed` – event to communicate to <app-location>
         window.dispatchEvent(new CustomEvent('location-changed'));
+//        this.$.header.trigerCharacterAnimation();
       }
 
-      _animateHomeNavigation(e) {
+      _animateToHomeNavigation() {
+        if (this.$.home.shadowRoot) {
+          const pageKeyframes = this.$.home.triggerReturningPageAnimation();
+          const headerKeyframes = this.$.header.navigateToHomepageAnimation();
+          const animGroup = new GroupEffect([headerKeyframes, pageKeyframes]);
+
+          const anim = document.timeline.play(animGroup);
+
+          anim.onfinish = (e) => {
+            this.navigateToAPage(requested);
+          };
+        } else {
+          this.navigateToAPage('home');
+        }
+      }
+
+      _animateFromHomeNavigation(e) {
         const requested = e.detail.requested;
         const pageKeyframes = this.$.home.triggerPageNavigationAnimation(requested);
         const headerKeyframes = this.$.header.navigateFromHomepageAnimation(requested);
@@ -186,8 +209,24 @@
         const anim = document.timeline.play(animGroup);
 
         anim.onfinish = (e) => {
-          this.navigateFromHome(requested);
+          this.navigateToAPage(requested);
         };
+      }
+
+      _animateBetweenPagesNavigation(e) {
+        const requested = e.detail.requested;
+//        const headerKeyframes = this.$.header.navigateBetweenPagesAnimation(requested);
+//        const animGroup = new GroupEffect(headerKeyframes);
+//
+//        const anim = document.timeline.play(animGroup);
+
+        this.$.header.navigateBetweenPagesAnimation(requested);
+        this.navigateToAPage(requested);
+//        const anim = document.timeline.play(animGroup);
+
+//        anim.onfinish = (e) => {
+//          this.navigateToAPage(requested);
+//        };
       }
 
     }

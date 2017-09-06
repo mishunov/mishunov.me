@@ -206,10 +206,15 @@
       Polymer.RenderStatus.afterNextRender(this, () => {
         Polymer.importHref(
             resolvedPageUrl,
-            this.injectStyles.bind(this),
+            this.__notifyReadiness.bind(this),
             null,
             true);
       });
+    }
+
+    __notifyReadiness(ev) {
+      this.injectStyles(ev);
+      this.dispatchEvent(new CustomEvent('homepage-ready'));
     }
 
     injectStyles(ev) {
@@ -237,6 +242,10 @@
 //        this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
 //      });
 //    }
+
+    triggerReturningPageAnimation() {
+      debugger;
+    }
 
     triggerPageNavigationAnimation(requestedPage) {
       const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
