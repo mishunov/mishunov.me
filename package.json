@@ -1,0 +1,7 @@
+{
+  "name": "mishunov.me",
+  "version": "2.0.0",
+  "dependencies" :{
+    "gulp" : ">=3.9.1"
+  }
+}
