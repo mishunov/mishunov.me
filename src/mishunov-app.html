@@ -185,19 +185,21 @@
       }
 
       _animateToHomeNavigation() {
-        if (this.$.home.shadowRoot) {
-          const pageKeyframes = this.$.home.triggerReturningPageAnimation();
+//        if (this.$.home.shadowRoot) {
           const headerKeyframes = this.$.header.navigateToHomepageAnimation();
-          const animGroup = new GroupEffect([headerKeyframes, pageKeyframes]);
+//          const pageKeyframes = this.$.home.triggerReturningPageAnimation();
+//          const animGroup = new GroupEffect([headerKeyframes, pageKeyframes]);
 
-          const anim = document.timeline.play(animGroup);
+//          const anim = document.timeline.play(animGroup);
+          const anim = document.timeline.play(headerKeyframes);
 
-          anim.onfinish = (e) => {
-            this.navigateToAPage(requested);
-          };
-        } else {
-          this.navigateToAPage('home');
-        }
+
+//          anim.onfinish = (e) => {
+//            this.navigateToAPage(requested);
+//          };
+//        } else {
+//          this.navigateToAPage('home');
+//        }
       }
 
       _animateFromHomeNavigation(e) {

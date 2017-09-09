@@ -63,6 +63,13 @@
         };
       }
 
+      _shift() {
+        const rectHeader = this.parentElement.getBoundingClientRect();
+        const rectNav = this.getBoundingClientRect();
+
+        return (rectNav.left - rectHeader.left)/2;
+      }
+
       animateTransitionFromHome(requestedPage) {
         const reversedColor = requestedPage === 'working' || requestedPage === 'writing'? '#fff': '#000';
         const timing = {
@@ -82,20 +89,18 @@
         return new GroupEffect([moveKeyframesEffect, colorKeyframesEffect]);
       }
 
-      animateTransitionToHome() {
-        const timing = {
-          duration: 300,
-          easing: 'ease-out',
-          fill: "forwards"
-        };
-
-        debugger;
-
+      animateTransitionToHome(timing) {
+        const reversedColor = this.page === 'working' || this.page === 'writing'? '#fff': '#000';
         const moveKeyframesEffect = new KeyframeEffect(this, {
-          "transform": [this.style.getPropertyValue('transform'), "translateX(0px)"]
+          "transform": ["translateX(0px)", (() => {
+            let shift = this._shift();
+            if (shift !== 0) {
+              return `translateX(${shift * -1}px)`;
+            }
+          })()]
         }, timing);
         const colorKeyframesEffect = new KeyframeEffect(this, {
-          "--my-navigation-anchors-color": ['#000', reversedColor]
+          "--my-navigation-anchors-color": [reversedColor, '#000']
         }, timing);
 
         return new GroupEffect([moveKeyframesEffect, colorKeyframesEffect]);
