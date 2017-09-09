@@ -7,6 +7,7 @@
     <style include="shared-styles">
       :host {
         display: block;
+        opacity: 0;
       }
       h1 {
         margin: 0;
@@ -103,14 +104,9 @@
       static get properties() {
         return {
           page: {
-            type: String,
-            observer: 'tweenSectionsTitle'
+            type: String
           }
         };
-      }
-
-      ready() {
-        super.ready();
       }
 
       __computeSectionTitle(page) {
@@ -132,6 +128,7 @@
       }
 
       tweenSectionsTitle() {
+        TweenLite.to(this, 1, {autoAlpha: 1});
         TweenLite.to(this.$.title, 1, {text: this.__computeSectionTitle(this.page), ease:Power4.easeOut});
       }
     }
