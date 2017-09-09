@@ -22,6 +22,7 @@
         margin: 0 0 48px;
         padding: 0;
         position: relative;
+        z-index: 2;
         background-color: transparent;
         background-position: 100% 100%;
         background-repeat: repeat-x;
@@ -48,7 +49,7 @@
         right: 0;
         width: 100%;
         height: 100%;
-        background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;
+        /*background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;*/
         background-size: cover;
       }
       [main-title] {
@@ -99,7 +100,7 @@
           background-image: url('/images/header-bottom.png');
         }
         :host:after {
-          background-image: url('/images/dashed-border.svg');
+          /*background-image: url('/images/dashed-border.svg');*/
         }
         app-header {
           height: var(--app-header-height);
@@ -154,10 +155,10 @@
         </div>
         <my-navigation id="nav" page="[[page]]"></my-navigation>
       </app-toolbar>
-      <my-section-title page="[[page]]" hidden="[[isHomePage]]"></my-section-title>
+      <my-section-title id="sectiontitle" page="[[page]]" hidden="[[isHomePage]]"></my-section-title>
 
       <template is="dom-if" if="[[!isHomePage]]">
-        <my-character id="character" page="[[page]]"></my-character>
+        <my-character id="character" page="[[page]]" on-finished-animation="_characterIsDone"></my-character>
         <!--<my-character id="character"></my-character>-->
       </template>
     </app-header>
@@ -184,6 +185,10 @@
         return page === 'home' || false;
       }
 
+      _characterIsDone(event) {
+        this.$.sectiontitle.tweenSectionsTitle();
+      }
+
       _pageIsSet(newPage, oldPage) {
         if (newPage === 'home') {
           const header = this.shadowRoot.getElementById('header');
@@ -192,12 +197,11 @@
           const rectHeader = header.getBoundingClientRect();
           const rectNav = nav.getBoundingClientRect();
           const shift = (rectNav.left - rectHeader.left)/2;
-
           if (shift !== 0) {
-            nav.style.setProperty('transform', `translateX(${shift * -1}px)`);
+            this.style.setProperty('transform', `translateX(${shift * -1}px)`);
           }
         } else if(!oldPage || oldPage === 'home') {
-          this.style.setProperty('background-color', this.__getSectionsColor(newPage));
+//          this.style.setProperty('background-color', this.__getSectionsColor(newPage));
         }
       }
 
@@ -214,8 +218,33 @@
       }
 
       navigateToHomepageAnimation() {
+        const timing = {
+          duration: 300,
+          fill: "forwards"
+        };
         const nav = this.shadowRoot.getElementById('nav');
-        return nav.animateTransitionToHome();
+        const logo = this.shadowRoot.querySelector('[main-title] a');
+        const sectionTitle = this.shadowRoot.getElementById('sectiontitle');
+        const character = this.shadowRoot.getElementById('character');
+        const navAnimation = nav.animateTransitionToHome(timing);
+        let opacityLogo;
+
+        const opacityTitle = new KeyframeEffect(sectionTitle, {
+          "opacity": [1, 0]
+        }, timing);
+        const opacityCharacter = new KeyframeEffect(character, {
+          "opacity": [1, 0]
+        }, timing);
+
+//        TODO. Animation of the nav's color should be done only after we remove background color here I think.
+        if (logo) {
+          opacityLogo = new KeyframeEffect(logo, {
+            "opacity": [1, 0]
+          }, timing);
+          return new GroupEffect([navAnimation, opacityLogo, opacityTitle, opacityCharacter]);
+        } else {
+          return navAnimation;
+        }
       }
 
       _transitionBgColor(requestedPage) {
