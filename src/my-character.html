@@ -160,6 +160,7 @@
       }
 
       _onEntryAnimationComplete() {
+        this.dispatchEvent(new CustomEvent('finished-animation'));
         Polymer.RenderStatus.afterNextRender(this, () => {
           const contour = this.shadowRoot.getElementById(`${this.page}-contour`);
           const img = this.shadowRoot.querySelector('picture img');
@@ -193,6 +194,8 @@
               contour.style.setProperty('opacity', 1);
               tl.play();
           });
+        } else {
+          this._onEntryAnimationComplete();
         }
       }
     }
