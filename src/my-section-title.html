@@ -128,7 +128,7 @@
       }
 
       tweenSectionsTitle() {
-        TweenLite.to(this, 1, {autoAlpha: 1});
+        TweenLite.to(this, .3, {autoAlpha: 1});
         TweenLite.to(this.$.title, 1, {text: this.__computeSectionTitle(this.page), ease:Power4.easeOut});
       }
     }

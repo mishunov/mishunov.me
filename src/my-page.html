@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="my-page">
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyPage extends Polymer.Element {
+      static get is() {
+        return "my-page";
+      }
+
+      static get properties() {
+        return {
+          pageTiming: {
+            type: Object,
+            value: function () {
+              return {
+                duration: 300,
+                fill: "forwards"
+              }
+            }
+          }
+        }
+      }
+
+      exitAnimation() {
+        let tl;
+        if (this.timeline) {
+          tl = this.timeline;
+        } else {
+          tl = new TimelineLite();
+          tl.to(this, .5, {"opacity": 0});
+          this.timeline = tl;
+        }
+        return tl;
+      }
+
+      entryAnimation() {
+        if (this.timeline) {
+          this.timeline.play();
+        } else {
+          const tl = new TimelineLite();
+          tl.from(this, .5, {"opacity": 0});
+          this.timeline = tl;
+          tl.play();
+        }
+      }
+
+      resetExitAnimation() {
+        this.timeline.pause(0);
+      }
+    }
+
+    window.customElements.define(MyPage.is, MyPage);
+  </script>
+</dom-module>

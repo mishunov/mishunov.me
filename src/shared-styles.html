@@ -36,9 +36,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-header-height: 454px;
 
         --app-header: {
+          background-color: transparent;
           background-position: 100% 100%;
           background-repeat: repeat-x;
-          background-image: url('/images/header-bottom-mobile.png');
+          background-image: url('/images/dashed-border.svg'), url('/images/header-bottom-mobile.png');
+          background-size: cover, auto;
         };
       }
       a {

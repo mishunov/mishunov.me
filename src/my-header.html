@@ -23,14 +23,7 @@
         padding: 0;
         position: relative;
         z-index: 2;
-        background-color: transparent;
-        background-position: 100% 100%;
-        background-repeat: repeat-x;
-        /*transition: background-color .3s ease-out;*/
         --my-navigation-anchors-color: var(--app-primary-font-color);
-        /*background-image: url('/images/header-bottom-mobile.png');*/
-        /*--iron-icon-width: 15px;*/
-        /*--iron-icon-height: 15px;*/
         @apply --app-header;
       }
       :host([page="working"]),
@@ -39,18 +32,6 @@
       }
       :host([no-transition]) {
         transition: none;
-      }
-      :host:after {
-        content: "";
-        display: block;
-        position: absolute;
-        z-index: 1;
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-        /*background: transparent url('/images/dashed-border-mobile.svg') 100% 100% repeat-x;*/
-        background-size: cover;
       }
       [main-title] {
         pointer-events: auto;
@@ -84,23 +65,20 @@
       :host([page="writing"]) {
         color: var(--app-alt-font-color);
       }
-      /*:host([page="speaking"]) {*/
-        /*background-color: var(--app-lime-color);*/
-      /*}*/
-      /*:host([page="working"]) {*/
-        /*background-color: var(--app-blue-color);*/
-      /*}*/
-      /*:host([page="writing"]) {*/
-        /*background-color: var(--app-green-color);*/
-      /*}*/
+      :host([page="speaking"]) {
+        background-color: var(--app-lime-color);
+      }
+      :host([page="working"]) {
+        background-color: var(--app-blue-color);
+      }
+      :host([page="writing"]) {
+        background-color: var(--app-green-color);
+      }
       /* end Sections */
 
       @media screen and (min-width: 768px) {
         :host {
-          background-image: url('/images/header-bottom.png');
-        }
-        :host:after {
-          /*background-image: url('/images/dashed-border.svg');*/
+          background-image: url('/images/dashed-border.svg'), url('/images/header-bottom.png');
         }
         app-header {
           height: var(--app-header-height);
@@ -111,11 +89,6 @@
         [main-title] a {
           line-height: auto;
         }
-        /*[main-title] {*/
-          /*position: fixed;*/
-          /*left: 50px;*/
-          /*top: 21px;*/
-        /*}*/
       }
       @media screen and (min-width: 1024px) {
         :host {
@@ -123,7 +96,7 @@
         }
       }
       @media screen and (min-width: 1758px) {
-        :host:after {
+        :host {
           background-size: auto;
         }
       }
@@ -189,6 +162,7 @@
         this.$.sectiontitle.tweenSectionsTitle();
       }
 
+      /** This is run when we get *to* /home or when the get to a new page *from* home */
       _pageIsSet(newPage, oldPage) {
         if (newPage === 'home') {
           const header = this.shadowRoot.getElementById('header');
@@ -198,10 +172,10 @@
           const rectNav = nav.getBoundingClientRect();
           const shift = (rectNav.left - rectHeader.left)/2;
           if (shift !== 0) {
-            this.style.setProperty('transform', `translateX(${shift * -1}px)`);
+            nav.style.setProperty('transform', `translateX(${shift * -1}px)`);
           }
         } else if(!oldPage || oldPage === 'home') {
-//          this.style.setProperty('background-color', this.__getSectionsColor(newPage));
+          this.style.setProperty('background-color', this.__getSectionsColor(newPage));
         }
       }
 
@@ -212,51 +186,92 @@
             section === 'home' && 'transparent';
       }
 
-      navigateFromHomepageAnimation(requestedPage) {
+      entryAnimation(requestedPage) {
         const nav = this.shadowRoot.getElementById('nav');
-        return nav.animateTransitionFromHome(requestedPage);
-      }
+        const reversedColor = requestedPage === 'working' || requestedPage === 'writing'? '#fff': '#000';
+        const tl = new TimelineLite();
 
-      navigateToHomepageAnimation() {
-        const timing = {
-          duration: 300,
-          fill: "forwards"
-        };
+        tl.to(nav, .5, {
+            "transform": "translateX(0px)",
+            ease: Power3.easeOut
+          })
+          .to(nav, .5, {
+            "--my-navigation-anchors-color": reversedColor,
+            ease: Power0.easeNone
+          }, "-=.5");
+        this.entryAnimation = tl;
+        return tl;
+      }
+//      entryAnimation(requestedPage) {
+//        const nav = this.shadowRoot.getElementById('nav');
+//        return nav.animateTransitionFromHome(requestedPage);
+//      }
+
+      exitAnimation() {
+        const tl = new TimelineLite();
         const nav = this.shadowRoot.getElementById('nav');
         const logo = this.shadowRoot.querySelector('[main-title] a');
         const sectionTitle = this.shadowRoot.getElementById('sectiontitle');
         const character = this.shadowRoot.getElementById('character');
-        const navAnimation = nav.animateTransitionToHome(timing);
-        let opacityLogo;
+        const rectHeader = this.getBoundingClientRect();
+        const rectNav = nav.getBoundingClientRect();
+        const shift = (rectNav.left - rectHeader.left)/2;
+//        const navAnimation = nav.animateTransitionToHome(timing);
 
-        const opacityTitle = new KeyframeEffect(sectionTitle, {
-          "opacity": [1, 0]
-        }, timing);
-        const opacityCharacter = new KeyframeEffect(character, {
-          "opacity": [1, 0]
-        }, timing);
+        tl.staggerTo([sectionTitle, character, logo], .3, {opacity: 0})
+          .to(nav, .3, {"x": (() => {
+            if (shift !== 0) {
+              return `${shift * -1}px`;
+            }
+          })(), ease: Power3.easeOut})
+          .to(nav, .3, {"--my-navigation-anchors-color": "#000"}, "-=.3")
+          .to(this, .3, {backgroundColor: 'transparent'}, "-=.3")
+          .to(this, 0, {backgroundImage: 'none'});
 
-//        TODO. Animation of the nav's color should be done only after we remove background color here I think.
-        if (logo) {
-          opacityLogo = new KeyframeEffect(logo, {
-            "opacity": [1, 0]
-          }, timing);
-          return new GroupEffect([navAnimation, opacityLogo, opacityTitle, opacityCharacter]);
-        } else {
-          return navAnimation;
-        }
+        return tl;
+//        const timing = {
+//          duration: 300,
+//          fill: "forwards"
+//        };
+//
+//        const nav = this.shadowRoot.getElementById('nav');
+//        const logo = this.shadowRoot.querySelector('[main-title] a');
+//        const sectionTitle = this.shadowRoot.getElementById('sectiontitle');
+//        const character = this.shadowRoot.getElementById('character');
+//        const navAnimation = nav.animateTransitionToHome(timing);
+//        let opacityLogo;
+//
+//        const opacityTitle = new KeyframeEffect(sectionTitle, {
+//          "opacity": [1, 0]
+//        }, timing);
+//        const opacityCharacter = new KeyframeEffect(character, {
+//          "opacity": [1, 0]
+//        }, timing);
+//        const moveBg = new SequenceEffect([
+//          new KeyframeEffect(this, {
+//            "backgroundColor": [this.style.getPropertyValue('background-color'), 'transparent']
+//          }, timing),
+//          new KeyframeEffect(this, {
+//            "backgroundImage": ['none', 'none']
+//          }, {duration: 0, fill: "forwards"})
+//        ]);
+//
+//        if (logo) {
+//          opacityLogo = new KeyframeEffect(logo, {
+//            "opacity": [1, 0]
+//          }, timing);
+//          return new GroupEffect([navAnimation, opacityLogo, opacityTitle, opacityCharacter, moveBg]);
+//        } else {
+//          return navAnimation;
+//        }
       }
 
-      _transitionBgColor(requestedPage) {
+      betweenAnimation(requestedPage) {
         const targetBg = this.__getSectionsColor(requestedPage);
         return TweenLite.to(this, 1, {
           backgroundColor: targetBg.trim(),
           ease: Power1.easeOut
         });
-      }
-
-      navigateBetweenPagesAnimation(requestedPage) {
-        return this._transitionBgColor(requestedPage);
       }
 
       handleClick(e) {

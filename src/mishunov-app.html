@@ -64,7 +64,7 @@
       fallback-selection="view404"
       role="main">
 
-      <my-home id="home" name="home" on-homepage-ready="_notifyReadines"></my-home>
+      <my-home id="home" name="home"></my-home>
       <my-working class="react-to-width" name="working"></my-working>
       <my-speaking class="react-to-width" name="speaking"></my-speaking>
       <my-writing class="react-to-width" name="writing"></my-writing>
@@ -122,10 +122,6 @@
         this.addEventListener('navigation-between-pages-requested', (e)=>this._animateBetweenPagesNavigation(e));
       }
 
-      _notifyReadines() {
-        this.removeAttribute('unresolved');
-      }
-
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'home' in that case.
@@ -177,42 +173,87 @@
         }
       }
 
-      navigateToAPage(requested) {
+      navigateToAPage(requested, current) {
         window.history.pushState({}, null, '/' + requested);
+        const elInDom = this.shadowRoot.querySelector(`[name="${requested}"]`);
+        const currentInDom = this.shadowRoot.querySelector(`[name="${current}"]`);
+        if (elInDom.shadowRoot) {
+          elInDom.entryAnimation();
+        }
+        currentInDom.resetExitAnimation();
+
         // `location-changed` – event to communicate to <app-location>
         window.dispatchEvent(new CustomEvent('location-changed'));
-//        this.$.header.trigerCharacterAnimation();
       }
 
       _animateToHomeNavigation() {
 //        if (this.$.home.shadowRoot) {
-          const headerKeyframes = this.$.header.navigateToHomepageAnimation();
-//          const pageKeyframes = this.$.home.triggerReturningPageAnimation();
+//        if(this.$.home.shadowRoot) {
+//          Polymer.Async.microTask.run(() => {
+//            this.$.home.resetExitAnimation();
+//            this.$.home.style.setProperty('opacity', 0);
+//          });
+//        }
+          const headerTimeline = this.$.header.exitAnimation();
+          const selectedPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
+          const pageTimeline = selectedPage.exitAnimation();
 //          const animGroup = new GroupEffect([headerKeyframes, pageKeyframes]);
 
+          const tl = new TimelineLite({
+            onComplete: () => {
+              this.navigateToAPage('home', this.shadowRoot.querySelector('iron-pages').selected);
+            }
+          });
+
+          tl.add(headerTimeline)
+            .add(pageTimeline);
+          tl.play();
+//
+//          const anim = document.timeline.play(headerKeyframes);
+//          const resolvedPageUrl = this.resolveUrl('/src/my-home.html');
+//          let homePageContents;
+//          Polymer.importHref(
+//              resolvedPageUrl,
+//              function () {
+//                debugger;
+//              },
+//              null,
+//              true);
+
 //          const anim = document.timeline.play(animGroup);
-          const anim = document.timeline.play(headerKeyframes);
-
-
+//
 //          anim.onfinish = (e) => {
-//            this.navigateToAPage(requested);
+//            this.navigateToAPage('home', e);
 //          };
-//        } else {
-//          this.navigateToAPage('home');
-//        }
       }
 
       _animateFromHomeNavigation(e) {
         const requested = e.detail.requested;
-        const pageKeyframes = this.$.home.triggerPageNavigationAnimation(requested);
-        const headerKeyframes = this.$.header.navigateFromHomepageAnimation(requested);
-        const animGroup = new GroupEffect([pageKeyframes, headerKeyframes]);
+        const headerTimeline = this.$.header.entryAnimation(requested);
+        const pageTimeline = this.$.home.exitAnimation(requested);
+        const tl = new TimelineLite({
+          onComplete: () => {
+            this.navigateToAPage(requested, 'home');
+          }
+        });
 
-        const anim = document.timeline.play(animGroup);
+        tl.add(pageTimeline, "page")
+          .add(headerTimeline, "-=.3");
 
-        anim.onfinish = (e) => {
-          this.navigateToAPage(requested);
-        };
+        tl.play();
+
+//        const animGroup = new GroupEffect([pageKeyframes, headerKeyframes]);
+
+//        const anim = document.timeline.play(animGroup);
+//        this.$.home.addEventListener('exit-animation-finished', () => {
+//          const anim = document.timeline.play(headerKeyframes);
+//
+//          anim.onfinish = (e) => {
+//            this.navigateToAPage(requested, 'home', e);
+//          };
+//        });
+//
+//        this.$.home.exitAnimation(requested);
       }
 
       _animateBetweenPagesNavigation(e) {
@@ -222,7 +263,7 @@
 //
 //        const anim = document.timeline.play(animGroup);
 
-        this.$.header.navigateBetweenPagesAnimation(requested);
+        this.$.header.betweenAnimation(requested);
         this.navigateToAPage(requested);
 //        const anim = document.timeline.play(animGroup);
 

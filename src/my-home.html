@@ -6,6 +6,7 @@
   <template>
     <style include="shared-styles">
       :host {
+        opacity: 0;
         display: block;
         position: absolute;
         width: 100%;
@@ -86,12 +87,12 @@
 
 
       /* Animation styles */
-      g[id$="-layer"] {
-        transition: opacity .5s ease-out;
-      }
-      #waves {
-        transition: transform 1s ease-in-out .5s; /* we should really employ JS events for figuring out when to start the transition */
-      }
+      /*g[id$="-layer"] {*/
+        /*transition: opacity .3s ease-out;*/
+      /*}*/
+      /*#waves {*/
+        /*transition: transform 1s ease-in-out .5s; !* we should really employ JS events for figuring out when to start the transition *!*/
+      /*}*/
     </style>
 
     <div id="intro" class="svg-container">
@@ -100,7 +101,6 @@
     </div>
 
     <div id="character">
-      <!--<svg viewBox="0 0 1618 1549" xmlns="http://www.w3.org/2000/svg"><g stroke="#000" stroke-width="4" fill="none" fill-rule="evenodd"><path d="M174 1520c-27.33 4-54.33 5.33-81 4-8.67-196-24.33-399-47-609"/><path d="M88 1521c-10-4.67-17-8.33-21-11-23.33-262-44.67-444.67-64-548l42-47 66-13m517-628c-2-18-13-93-3-74 3-60 9-61 27-96 5-30 16.3-42.38 19-46 4.3-5.8-4.3 20.15 2 18 41.33-29.33 95.33-54 162-74"/><path d="M820 12c40.67 11.33 73.67 32.67 99 64 5.05 2.25-.95-7.1-18-28 38.64 17.92 64.64 43.6 78 77 4 10 5 22 3 36l6-3c-6 54-6 102 0 144 8-10 9.63-10.6 10-7 6 58-13 97-19 102-4 3.33-10.33.67-19-8"/><path d="M794 181c-20-29.33-52.67-45.33-98-48-36 44-29 76-25 109-14 32-19 45-14 81s2.48 72.04 4 110c1 25 65 98 78 111s29.77 17.13 33 26c4 11 78.95-.17 92-8 30-18 76.38-71.66 88-94 2-13.33 5.33-52.17 10-116.5M1585 817c0 234 10 412.67 30 536-128.28 50.26-396.2 96.7-760 109-98.67 3.33-239.67 14-423 32M816 175c50.9-18.67 95.24-28 133-28-4 7-18 12-23 12 23 23 14.17 95.64 17 98 20 16.67 28.33 44.33 25 83"/><path d="M1581 820c-135 34-543.88 29.4-578 34-171 23-310 25-513 28m159-562c-16.22-20.9-25.88-28.56-29-23-14 25 2 53 13 83 4.9 13.4 3.1 21.32 10 27 4.6 3.8 10.6 2.45 18-4m20 72c-5 95-33.32 161.3 36 197 89.33 46 155.67 33.33 199-38"/><path d="M678 494c-6.36-1.67-12.7-.34-19 4-9.46 6.5-7 12-13 18-38-15-113 41-127 42-72.85 5.2-231 104-263 197-55.54 25.63-89.18 60.76-99.04 76.68-1.68 2.7-2.67 4.86-2.96 6.32-.67 8.67 1.33 16.33 6 23-44.54 46.8-67.88 73.45-70 80-12 37-7 142 0 154 16.73 28.68 48.4 123.35 95 284-12.67 30.67-18.67 56-18 76 1 30 4 58 23 81s16.95 2.37 33 0c12 8 30 9 28-9 16 29 28.08 13.97 45 5 32.67 12 45.33-4.33 38-49 4-14 9-27 15-39 21 16 31 83 73 61 15-14-1.85-20.26-14-35-13-80-83-104-112-113-37-142-15-187-35-389 11-9 12.3-11.65 27-16 11.33 6.67 20.33 6.67 27 0 78.64-34.07 133.64-56.4 165-67m457-351c56 7 227 132 242 169 10 24.67 32.67 72.33 68 143"/><path d="M156 835c48-16 55 38 70 44.1 24.78 10.08 38 19.9 65 46.9"/></g></svg>-->
       <picture>
         <source media="(max-width: 413px)"
                 srcset="/images/home-mobile.png,
@@ -206,15 +206,10 @@
       Polymer.RenderStatus.afterNextRender(this, () => {
         Polymer.importHref(
             resolvedPageUrl,
-            this.__notifyReadiness.bind(this),
+            this.injectStyles.bind(this),
             null,
             true);
       });
-    }
-
-    __notifyReadiness(ev) {
-      this.injectStyles(ev);
-      this.dispatchEvent(new CustomEvent('homepage-ready'));
     }
 
     injectStyles(ev) {
@@ -222,6 +217,7 @@
       const combo = styles + Polymer.StyleGather.cssFromModule('my-home');
       Polymer.RenderStatus.afterNextRender(this, () => {
         this.root.querySelector('style').textContent = combo;
+        this.entryAnimation();
         this.__centerWaves();
       });
     }
@@ -236,20 +232,8 @@
       circlesGroup.style.left = footerGroup.style.left = '-' + shift + 'px';
     }
 
-
-//    _navigateToPage(requestedPage) {
-//      Polymer.RenderStatus.afterNextRender(this, function () {
-//        this.dispatchEvent(new CustomEvent('frontpage-animation-to-nav-ended', {detail: {"requested": requestedPage}, bubbles: true, composed: true}));
-//      });
-//    }
-
-    triggerReturningPageAnimation() {
-      debugger;
-    }
-
-    triggerPageNavigationAnimation(requestedPage) {
+    _prepareExitAnimation(requestedPage) {
       const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
-      const footer = this.shadowRoot.getElementById('footer');
       const bgs = this.shadowRoot.querySelectorAll('[id^="bg-"]');
       const requestedSection = this.shadowRoot.querySelector('g[id="' + requestedPage + '-layer"]');
       const requestedIndex = (function (lrs) {
@@ -260,46 +244,198 @@
         }
       } )(layers);
       this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = bgs[requestedIndex].getAttribute('fill');
-
-      return this.exitAnimation(requestedIndex);
+      return requestedIndex;
     }
 
-    exitAnimation(requestedIndex) {
-      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
-      const picture = this.shadowRoot.querySelector('#character picture');
-      const timings = this.animationConfig.dissolveWaves.options;
-      const keyframes = this.animationConfig.dissolveWaves.keyframes;
-      const moveEffect = new KeyframeEffect(this.shadowRoot.getElementById('waves'), this.animationConfig.moveWaves.keyframes, this.animationConfig.moveWaves.options);
-      const pictureEffect = new KeyframeEffect(picture, this.animationConfig.dissolvePicture.keyframes, this.animationConfig.dissolvePicture.options);
+    resetExitAnimation() {
+      this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = "transparent";
+      this.entryTimeline.pause(0);
+    }
 
-      let dissolveEffects;
+    entryAnimation() {
+      const tl = new TimelineLite({
+        paused: true
+      });
+      const intro = this.$.intro;
+      const char = this.$.character;
+      const waves = this.$.waves;
+
+      if (this.entryTimeline) {
+        this.entryTimeline.play();
+//        return this.entryTimeline;
+      } else {
+        tl.staggerFrom([intro, char], .3, {
+          'y': '100%',
+          'opacity': 0,
+          ease: Power3.easeOut
+        })
+        .from(waves, .3, {
+          'opacity': 0,
+          ease: Power0.easeNone
+        }, "-=.1");
+        this.style.setProperty('opacity', 1);
+        this.entryTimeline = tl;
+        tl.play();
+      }
+//      return tl;
+    }
+
+    exitAnimation(requestedPage) {
+      if (this.exitTimeline) {
+//        this.exitTimeline.play();
+        return this.exitTimeline;
+      }
+      const requestedIndex = this._prepareExitAnimation(requestedPage);
+      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
+      const picture = this.shadowRoot.querySelector('#character img');
+      let headerHeight = (() => {
+        let height = ShadyCSS? ShadyCSS.getComputedStyleValue(this, '--app-header-height-mobile'): getComputedStyle(this, '--app-header-height-mobile');
+        if (document.documentElement.clientWidth >= 768 ) {
+          height = ShadyCSS? ShadyCSS.getComputedStyleValue(this, '--app-header-height'): getComputedStyle(this, '--app-header-height');
+        }
+        return height;
+      })();
+
+      let tl = new TimelineLite();
 
       switch(requestedIndex) {
         case 0:
-          dissolveEffects = [
-            new KeyframeEffect(layers[1], keyframes, timings),
-            new KeyframeEffect(layers[2], keyframes, timings),
-          ];
+          tl.staggerTo([layers[1], layers[2], picture], .3, {opacity:0, ease: Power1.easeOut});
           break;
         case 1:
-          dissolveEffects = [
-            new KeyframeEffect(layers[0], keyframes, timings),
-            new KeyframeEffect(layers[2], keyframes, timings),
-          ];
+          tl.staggerTo([layers[0], layers[2]], .3, {opacity:0, ease: Power1.easeIn});
           break;
         case 2:
-          dissolveEffects = [
-            new KeyframeEffect(layers[0], keyframes, timings),
-            new KeyframeEffect(layers[1], keyframes, timings),
-          ];
+          tl.staggerTo([layers[0], layers[1], picture], .3, {opacity:0, ease: Power1.easeOut});
           break;
       }
 
-      const groupDissolveAnimation = new GroupEffect(dissolveEffects);
-      const groupMoveAnimation = new GroupEffect([pictureEffect, moveEffect]);
+      tl.to(picture, .3, {opacity:0, ease: Power1.easeNone})
+      .to(this.shadowRoot.getElementById('waves'), .5, {
+        "transform": 'translateY(-' + (document.documentElement.clientHeight * 2 - parseInt(headerHeight)) + 'px)',
+        ease: Power1.easeIn
+      });
 
-      return new SequenceEffect([groupDissolveAnimation, groupMoveAnimation]);
+//      tl.play();
+      this.exitTimeline = tl;
+      return tl;
     }
+
+      /**
+       * The methods below should be used once I figure out how to reset animations, built with Web Animations API
+       * */
+
+//      entryAnimation() {
+//        const timing = {
+//          duration: 300,
+//          fill: "forwards",
+//          ease: "ease-out"
+//        };
+//
+//        const initSettings = {
+//          'intro': {
+//            'transform':  'translateY(100%)',
+//            'opacity':  '0'
+//          },
+//          'character': {
+//            'transform':  'translateY(100%)',
+//            'opacity':  '0'
+//          },
+//          'waves': {
+//            'opacity': '0'
+//          }
+//        };
+//
+//        for (let key in initSettings) {
+//          if (initSettings.hasOwnProperty(key)) {
+//            for (let prop in initSettings[key]) {
+//              if (initSettings[key].hasOwnProperty(prop)) {
+//                this.shadowRoot.getElementById(key).style.setProperty(prop, initSettings[key][prop]);
+//              }
+//            }
+//          }
+//        }
+//
+//        const introAnimation = new KeyframeEffect(this.$.intro, {
+//          'transform': ['translateY(100%)', 'translateY(0)'],
+//          'opacity': [0,1]
+//        }, timing);
+//        const charAnimation = new KeyframeEffect(this.$.character, {
+//          'transform': ['translateY(100%)', 'translateY(0)'],
+//          'opacity': [0,1]
+//        }, timing);
+//        const wavesAnimation = new KeyframeEffect(this.$.waves, {
+//          'opacity': [0,1]
+//        }, timing);
+//        const group = new GroupEffect([introAnimation, charAnimation]);
+//        const animation = new SequenceEffect([group, wavesAnimation]);
+//
+//        this.style.setProperty('opacity', 1);
+//        document.timeline.play(animation);
+//      }
+//    resetExitAnimation() {
+//      // reset output of  _prepareExitAnimation();
+//      this.shadowRoot.getElementById('transitionBackdrop').style.backgroundColor = 'transparent';
+//
+//      // reset character and waves
+//      this.shadowRoot.querySelector('#character img').animate({
+//        "opacity": [0, 1]
+//      }, {duration: 0, fill: 'forwards'});
+//      const waves = this.shadowRoot.getElementById('waves');
+//      waves.animate({
+//        "opacity": [0,1],
+//        "transform": ['translateY(-100%)', 'translateY(0)']
+//      },  {duration: 0, fill: 'forwards'});
+//
+//      // reset separate layers
+//      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
+//      for (let i = 0, l = layers.length; i < l; i++) {
+//        layers[i].animate({
+//          "opacity": [0,1]
+//        }, {duration: 0, fill: 'forwards'});
+//      }
+//    }
+//
+//    exitAnimation(requestedPage) {
+//      const requestedIndex = this._prepareExitAnimation(requestedPage);
+//
+//      const layers = this.shadowRoot.querySelectorAll('g[id$="-layer"]');
+//      const picture = this.shadowRoot.querySelector('#character img');
+//
+//      const dissolveWaveTimings = this.animationConfig.dissolveWaves.options;
+//      const dissolveWaveKeyframes = this.animationConfig.dissolveWaves.keyframes;
+//
+//      const moveEffect = new KeyframeEffect(this.shadowRoot.getElementById('waves'), this.animationConfig.moveWaves.keyframes, this.animationConfig.moveWaves.options);
+//      const pictureEffect = new KeyframeEffect(picture, this.animationConfig.dissolvePicture.keyframes, this.animationConfig.dissolvePicture.options);
+//
+//      let dissolveEffects;
+//
+//      switch(requestedIndex) {
+//        case 0:
+//          dissolveEffects = [
+//            new KeyframeEffect(layers[1], dissolveWaveKeyframes, dissolveWaveTimings),
+//            new KeyframeEffect(layers[2], dissolveWaveKeyframes, dissolveWaveTimings),
+//          ];
+//          break;
+//        case 1:
+//          dissolveEffects = [
+//            new KeyframeEffect(layers[0], dissolveWaveKeyframes, dissolveWaveTimings),
+//            new KeyframeEffect(layers[2], dissolveWaveKeyframes, dissolveWaveTimings),
+//          ];
+//          break;
+//        case 2:
+//          dissolveEffects = [
+//            new KeyframeEffect(layers[0], dissolveWaveKeyframes, dissolveWaveTimings),
+//            new KeyframeEffect(layers[1], dissolveWaveKeyframes, dissolveWaveTimings),
+//          ];
+//          break;
+//      }
+//
+//      const groupDissolveAnimation = new GroupEffect(dissolveEffects);
+//      const groupMoveAnimation = new GroupEffect([pictureEffect, moveEffect]);
+//
+//      return new SequenceEffect([groupDissolveAnimation, groupMoveAnimation]);
+//    }
 
   }
   customElements.define(MyHome.is, MyHome);

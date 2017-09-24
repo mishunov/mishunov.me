@@ -1,0 +1,125 @@
+{
+  "past": [
+    {
+      "name": "Frontend United",
+      "place": "Athens, Greece",
+      "dateStart": "2017-05-26",
+      "dateEnd": "2017-05-27",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "Smashing Conference",
+      "place": "San Francisco, USA",
+      "dateStart": "2017-04-05",
+      "dateEnd": "2017-04-06",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "HolyJS Moscow",
+      "place": "Moscow, Russia",
+      "dateStart": "2016-12-11",
+      "type": "keynote",
+      "videoURL": ""
+    }, {
+      "name": "Ferðalausnir 2016",
+      "place": "Reykjavík, Iceland",
+      "dateStart": "2016-11-25",
+      "type": "workshop, keynote",
+      "videoURL": ""
+    }, {
+      "name": "O'Reilly Velocity",
+      "place": "Amsterdam, The Netherlands",
+      "dateStart": "2016-11-07",
+      "dateEnd": "2016-11-10",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "Euro IA",
+      "place": "Amsterdam, The Netherlands",
+      "dateStart": "2016-09-22",
+      "dateEnd": "2016-09-24",
+      "type": "workshop",
+      "videoURL": ""
+    }, {
+      "name": "From The Front",
+      "place": "Bologna, Italy",
+      "dateStart": "2016-09-15",
+      "dateEnd": "2016-09-16",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "Smashing Conference",
+      "place": "Freiburg im Breisgau, Germany",
+      "dateStart": "2016-09-12",
+      "dateEnd": "2016-09-13",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "HolyJS 2016 Piter",
+      "place": "St. Petersburg, Russia",
+      "dateStart": "2016-06-05",
+      "type": "keynote",
+      "videoURL": ""
+    }, {
+      "name": "RitFest 2016",
+      "place": "Moscow, Russia",
+      "dateStart": "2016-05-19",
+      "dateEnd": "2016-05-20",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "JSConf Budapest",
+      "place": "Budapest, Hungary",
+      "dateStart": "2016-05-12",
+      "dateEnd": "2016-05-13",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "Frontend Dev Conf",
+      "place": "Minsk, Belarus",
+      "dateStart": "2016-04-16",
+      "type": "talk",
+      "videoURL": ""
+    }, {
+      "name": "JSConf EU",
+      "place": "Berlin, Germany",
+      "dateStart": "2015-09-25",
+      "dateEnd": "2015-09-27",
+      "type": "talk",
+      "videoURL": ""
+    },
+  ],
+  "future": [
+    {
+      "name": "Smashing Conference",
+      "place": "Barcelona, Spain",
+      "url": "https://smashingconf.com",
+      "dateStart": "2017-10-17",
+      "dateEnd": "2017-10-18",
+      "type": "talk"
+    },
+    {
+      "name": "Plone Conference",
+      "place": "Barcelona, Spain",
+      "url": "https://2017.ploneconf.org",
+      "dateStart": "2017-10-16",
+      "dateEnd": "2017-10-22",
+      "type": "keynote"
+    },
+    {
+      "name": "CSSConf Budapest",
+      "place": "Budapest, Hungary",
+      "url": "http://cssconfbp.rocks",
+      "dateStart": "2017-10-25",
+      "type": "talk"
+    },
+    {
+      "name": "HolyJS",
+      "place": "Moscow, Russia",
+      "url": "https://holyjs-moscow.ru/en/",
+      "dateStart": "2017-12-10",
+      "dateEnd": "2017-12-12",
+      "type": "workshop"
+    }
+  ]
+}

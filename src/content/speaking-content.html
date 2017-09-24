@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="speaking-content">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <h1>Upcomming Events</h1>
+
+    <h1>Previous Events</h1>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class SpeakingContent extends Polymer.Element {
+      static get is() {
+        return 'speaking-content';
+      }
+
+      static get properties() {
+        return {
+          future: Array,
+          past: Array
+        };
+      }
+
+      ready() {
+        super.ready();
+          Polymer.RenderStatus.afterNextRender(this, () => {
+            Polymer.importHref(
+                this.resolveUrl('conferences.json'),
+              this.injectContent.bind(this),
+              null,
+              true);
+          });
+      }
+
+      injectContent() {
+        debugger;
+      }
+    }
+
+    window.customElements.define(SpeakingContent.is, SpeakingContent);
+  </script>
+</dom-module>

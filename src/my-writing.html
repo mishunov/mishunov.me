@@ -1,10 +1,16 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="my-page.html">
 
 <link rel="import" href="shared-content-styles.html">
 
 <dom-module id=my-writing>
   <template>
-    <style include="shared-content-styles"></style>
+
+    <style include="shared-content-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
     <h1>This comes with a title.</h1>
     <p>For me, writing is essential for shaping up ideas, learning new things and master the speaking skills. Here you can find the list of articles I have authored.</p>
     <p>If you are an entrepreneur, you know that your success cannot depend on the opinions of others. Like the wind, opinions change…like the weather, opinions change frequently. To succeed at any endeavor, you must stay the course…no matter what the cost! Here are some surefire tips to help you on your journey.</p>
@@ -22,13 +28,9 @@
      * @customElement
      * @polymer
      */
-    class MyWriting extends Polymer.Element {
+    class MyWriting extends MyPage {
       static get is() {
         return 'my-writing';
-      }
-
-      static get properties() {
-        return {};
       }
     }
 
