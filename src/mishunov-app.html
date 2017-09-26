@@ -71,7 +71,7 @@
       <my-view404 class="react-to-width" name="view404"></my-view404>
     </iron-pages>
 
-    <my-footer page="[[page]]"></my-footer>
+    <my-footer id="footer" page="[[page]]"></my-footer>
 
   </template>
 
@@ -129,7 +129,7 @@
       }
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        let resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        let resolvedPageUrl = this.resolveUrl(`my-${page}.html`);
         Polymer.importHref(
           resolvedPageUrl,
           this._pageLoaded.bind(this),
@@ -139,6 +139,16 @@
 
       _pageLoaded() {
         this._ensureLazyLoaded();
+        const curr = this.shadowRoot.querySelector('iron-pages').selected;
+        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
+        // Make sure to animate content into view only after the character:
+        if (curr !== 'home') {
+          const delay = this.$.header.shadowRoot.getElementById('character').timeline.totalDuration();
+          const contentTimeline = currPage.entryAnimation();
+          const tl = new TimelineLite();
+          tl.add(contentTimeline, `+=${delay}`);
+          tl.play();
+        }
       }
 
       _ensureLazyLoaded() {
@@ -152,6 +162,10 @@
 //              }
 //              this._notifyNetworkStatus();
               this.loadComplete = true;
+              let charTransition = document.createElement('character-transition');
+              const footer = this.$.footer;
+              charTransition.id = 'transition';
+              this.shadowRoot.insertBefore(charTransition, footer);
             });
           });
         }
@@ -176,28 +190,22 @@
       navigateToAPage(requested, current) {
         window.history.pushState({}, null, '/' + requested);
         const elInDom = this.shadowRoot.querySelector(`[name="${requested}"]`);
-        const currentInDom = this.shadowRoot.querySelector(`[name="${current}"]`);
+//        const currentInDom = this.shadowRoot.querySelector(`[name="${current}"]`);
         if (elInDom.shadowRoot) {
           elInDom.entryAnimation();
         }
-        currentInDom.resetExitAnimation();
 
         // `location-changed` – event to communicate to <app-location>
         window.dispatchEvent(new CustomEvent('location-changed'));
+//        currentInDom.resetExitAnimation();
+        this.shadowRoot.getElementById('transition').resetAnimation();
+        this.shadowRoot.getElementById('header').resetAnimation();
       }
 
       _animateToHomeNavigation() {
-//        if (this.$.home.shadowRoot) {
-//        if(this.$.home.shadowRoot) {
-//          Polymer.Async.microTask.run(() => {
-//            this.$.home.resetExitAnimation();
-//            this.$.home.style.setProperty('opacity', 0);
-//          });
-//        }
           const headerTimeline = this.$.header.exitAnimation();
           const selectedPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
           const pageTimeline = selectedPage.exitAnimation();
-//          const animGroup = new GroupEffect([headerKeyframes, pageKeyframes]);
 
           const tl = new TimelineLite({
             onComplete: () => {
@@ -208,68 +216,61 @@
           tl.add(headerTimeline)
             .add(pageTimeline);
           tl.play();
-//
-//          const anim = document.timeline.play(headerKeyframes);
-//          const resolvedPageUrl = this.resolveUrl('/src/my-home.html');
-//          let homePageContents;
-//          Polymer.importHref(
-//              resolvedPageUrl,
-//              function () {
-//                debugger;
-//              },
-//              null,
-//              true);
-
-//          const anim = document.timeline.play(animGroup);
-//
-//          anim.onfinish = (e) => {
-//            this.navigateToAPage('home', e);
-//          };
       }
 
       _animateFromHomeNavigation(e) {
         const requested = e.detail.requested;
-        const headerTimeline = this.$.header.entryAnimation(requested);
-        const pageTimeline = this.$.home.exitAnimation(requested);
+        const headerTimeline = this.$.header.entryAnimation();
+        const pageTimeline = this.$.home.exitAnimation();
+
+        const charTransition = this.shadowRoot.getElementById('transition');
+        charTransition.canvas = this.$.home.shadowRoot.getElementById('character');
+
+        const charTimeline = charTransition.transition('fromHome');
+        const charExitTransition = charTransition.exitTransition();
+
         const tl = new TimelineLite({
           onComplete: () => {
             this.navigateToAPage(requested, 'home');
           }
         });
 
-        tl.add(pageTimeline, "page")
-          .add(headerTimeline, "-=.3");
+        tl
+          .add(charTimeline)
+          .add(pageTimeline)
+          .add(headerTimeline)
+          .add(charExitTransition, "-=.3");
 
         tl.play();
-
-//        const animGroup = new GroupEffect([pageKeyframes, headerKeyframes]);
-
-//        const anim = document.timeline.play(animGroup);
-//        this.$.home.addEventListener('exit-animation-finished', () => {
-//          const anim = document.timeline.play(headerKeyframes);
-//
-//          anim.onfinish = (e) => {
-//            this.navigateToAPage(requested, 'home', e);
-//          };
-//        });
-//
-//        this.$.home.exitAnimation(requested);
       }
 
       _animateBetweenPagesNavigation(e) {
+        const animations = ['handPush'];
+        const transitionType = animations[Math.floor(Math.random() * animations.length)];
         const requested = e.detail.requested;
-//        const headerKeyframes = this.$.header.navigateBetweenPagesAnimation(requested);
-//        const animGroup = new GroupEffect(headerKeyframes);
-//
-//        const anim = document.timeline.play(animGroup);
+        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
 
-        this.$.header.betweenAnimation(requested);
-        this.navigateToAPage(requested);
-//        const anim = document.timeline.play(animGroup);
+        const charTransition = this.shadowRoot.getElementById('transition');
+        charTransition.canvas = this.$.header.shadowRoot.getElementById('character');
 
-//        anim.onfinish = (e) => {
-//          this.navigateToAPage(requested);
-//        };
+        const charTimeline = charTransition.transition();
+        const charExitTransition = charTransition.exitTransition(transitionType);
+        const pageTimeline = currPage.exitAnimation();
+        const headerTimeline = this.$.header.betweenAnimation(transitionType);
+
+        const tl = new TimelineLite({
+          onComplete: () => {
+            this.navigateToAPage(requested, this.shadowRoot.querySelector('iron-pages').selected);
+          }
+        });
+
+        tl
+          .add(charTimeline)
+          .add(headerTimeline, "-=.3")
+          .add(charExitTransition)
+          .add(pageTimeline, "-=.3");
+
+        tl.play();
       }
 
     }

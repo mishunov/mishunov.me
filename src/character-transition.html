@@ -1,0 +1,235 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="character-transition">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+      }
+      :host > div {
+        opacity:0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      svg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      #eraser img {
+        position: absolute;
+        bottom: -11em;
+        right: -11em;
+        z-index: 10;
+        width: 16.7em;
+      }
+      #eraser svg {
+        width: 120%;
+        height: 120%;
+        top: -10%;
+        left: -10%;
+      }
+
+      #hand-push svg {
+        right: -40%;
+        bottom: 1em;
+        width: 70%;
+        transform: rotate(-60deg);
+      }
+      #hand-end {
+        visibility: hidden;
+      }
+    </style>
+
+    <div id="eraser">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 449"><path fill="none" fill-rule="nonzero" stroke="#FFE11A" stroke-width="60" d="M475 415l-68 4 72-35-183 35 173-74-268 70 278-119L79 419l390-182L36 384c284.998-135.393 431.332-207.727 439-217 11.503-13.91-396.96 178.925-396 165 .64-9.283 133.974-83.616 400-223L31 317 479 47 36 262 423 36 31 205 327 36 31 157 245 31 31 109l120-78L31 62l54-31" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <img src="../images/hand-with-eraser.svg" alt="">
+    </div>
+
+    <div id="hand-push">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1796 1451" fill="#FFE11A" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke="#fff" stroke-width="13"><path id="hand-end" d="M1705 768c-128.27-23.6-237.28-37.5-334.07-45.26-157.5-12.64-282.68-9.08-405.93-4.74-199 7-273-99-326-112-307-89-448-203-473-268-6.03-15.7-23-66 31-101 7 0 27-18 69-5.72 33 8.72 115.7 83.6 202 98.72 39.3 6.88 94.36.62 171 8 54.8 5.28 159.48 17.94 314 38-153.88-20.6-258.55-33.28-314-38-123.15-10.48-140 0-171-8-100-21-148.42-82.2-202-98.72-34-11.28-68.5 5.87-69 5.72-99.3-30.7-163.25-70.5-182-108C-12.04 74.92 31.76-8.84 89 10c127.3 41.9 335.67 106.94 563.9 161.94 199.14 48 413.4 88.34 602.1 99.06 223.3 44.8 342 44 469 67 86.25 74.9 92.42 450.5-19 430z"/><path id="hand-start" d="M1705 768c-128.27-23.6-307.2-72.66-333-18-34 72-66 100-159 202s-262.24 127-315.24 114C850 1108 755 1196 639 1222c-22.57 5.06-34 4-60 0 7 0-70-27-76-63s-18-97 149.9-155C686.77 992.3 812 868 866 810s18-73 80-120c-52 31-40 82-80 120-64 71-155 157-213.1 194C528 1047 487 1096 503 1159c4 28 60 55 76 63-50 68-136.34 205.86-178 229-45 25-125-34-93-99 130.42-264.9 397.73-574.28 558-710 111-94 218-228 494-339 180 20 237 12 364 35 86.25 74.9 92.42 450.5-19 430z"/></svg>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class CharacterTransition extends Polymer.Element {
+      static get is() {
+        return "character-transition";
+      }
+
+      static get properties() {
+        return {
+          canvas: {
+            type: Object,
+            observer: '_setCanvasBorders'
+          },
+          timeline: {
+            type: Object,
+            value: function () {
+              return {};
+            }
+          }
+        };
+      }
+
+      _setCanvasBorders(canvas) {
+        const rect = canvas.getBoundingClientRect();
+        this.style.setProperty('width', `${rect.width}px`);
+        this.style.setProperty('height', `${rect.height}px`);
+        this.style.setProperty('top', `${rect.top}px`);
+        this.style.setProperty('left', `${rect.left}px`);
+      }
+
+      transition(type) {
+        let transition;
+        type = type||'';
+        switch(type) {
+          case "fromHome":
+            transition = this.erase();
+            break;
+          default:
+            transition = this.handPush();
+            break;
+        }
+        return transition;
+      }
+
+      resetAnimation() {
+        if (this.timeline) {
+
+          const pusher = this.shadowRoot.querySelector('#hand-push svg');
+          pusher.style.removeProperty('transform');
+
+          const start = this.shadowRoot.getElementById('hand-start');
+          start.removeAttribute('style');
+
+
+          const divs = this.shadowRoot.querySelectorAll('div');
+          for(let i = 0, l = divs.length; i<l; ++i) {
+            let el = divs[i];
+            if(parseInt(el.style.getPropertyValue('opacity'), 10)) {
+              el.style.opacity = '';
+            }
+          }
+
+          this.style.setProperty('opacity', "1");
+        }
+      }
+
+      exitTransition(t) {
+        t = t || '';
+        let tl;
+
+        // All of the styles here should be reset in resetAnimation()
+        switch(t) {
+          case 'handPush':
+            tl = new TimelineLite({
+              onComplete: () => {
+                this.resetHandPush();
+              }
+            });
+            const style = this.shadowRoot.getElementById('hand-push');
+            const pusher = style.querySelector('svg');
+            const start = this.shadowRoot.getElementById('hand-start');
+
+            tl
+              .to(start, .3, {morphSVG:{shape:start, shapeIndex:0}, ease:Power2.easeOut})
+              .to(pusher, .3, {y: "-150%"}, "-=.3");
+            break;
+          default:
+            tl = new TimelineLite({
+              onComplete: () => {
+                this.resetErase();
+              }
+            });
+            tl.to(this, .3, {opacity:0});
+            break;
+        }
+
+        return tl;
+      }
+
+      erase() {
+        const transitionStyle = this.shadowRoot.getElementById('eraser');
+
+        if(Polymer.Path.get(this, 'timeline.erase')) {
+          this.timeline.erase.seek(0);
+          transitionStyle.style.setProperty('opacity', 1);
+          return this.timeline.erase;
+        }
+
+        const eraser = transitionStyle.querySelector('svg');
+        const hand = transitionStyle.querySelector('img');
+        const path = eraser.querySelector('path');
+        const offsetX = -1 * (hand.getBoundingClientRect().left - this.canvas.offsetLeft);
+        const offsetY = -1 * (hand.getBoundingClientRect().top - this.canvas.offsetTop);
+        let genericTl = new TimelineLite();
+        let handTl = new TimelineMax({
+          yoyo: true,
+          repeat: 24
+        });
+        let tl = new TimelineMax();
+
+        genericTl
+          .from(hand, 0.5, {x: "100%", y: "100%", ease: Circ.easeInOut})
+          .to(hand, 0.3, {rotation: "-45deg", ease: Circ.easeInOut}, "-=0.2")
+          .to(hand, 3, {x: offsetX, y: offsetY,  ease: Power1.easeInOut})
+          .from(path, 3, {drawSVG: "0%", ease: Power1.easeInOut}, "-=2.9");
+
+        handTl.to(hand, 0.125, {rotation: "+=90",  ease: Power1.easeInOut, transformOrigin:"90% 95%"});
+
+        transitionStyle.style.setProperty('opacity', 1);
+
+        tl.add(genericTl, "generic")
+          .add(handTl, "-=3");
+
+        Polymer.Path.set(this, 'timeline.erase', tl);
+
+        return tl;
+      }
+
+      handPush() {
+        const transitionStyle = this.shadowRoot.getElementById('hand-push');
+
+        if(Polymer.Path.get(this, 'timeline.handPush')) {
+          this.timeline.handPush.seek(0);
+          transitionStyle.style.setProperty('opacity', 1);
+          return this.timeline.handPush;
+        }
+
+        let tl = new TimelineLite();
+        const pusher = transitionStyle.querySelector('svg');
+        const start = this.shadowRoot.getElementById('hand-start');
+        const end = this.shadowRoot.getElementById('hand-end');
+
+        tl
+          .from(pusher, .5, {y: "-150%"})
+          .to(start, .3, {morphSVG:{shape:end, shapeIndex:0}, ease:Back.easeOut.config(2)}, "+=.5");
+
+        transitionStyle.style.setProperty('opacity', 1);
+
+        Polymer.Path.set(this, 'timeline.handPush', tl);
+        return tl;
+      }
+
+      resetErase() {
+
+      }
+
+      resetHandPush() {
+
+      }
+
+    }
+
+    window.customElements.define(CharacterTransition.is, CharacterTransition);
+  </script>
+</dom-module>

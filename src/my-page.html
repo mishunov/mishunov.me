@@ -25,31 +25,28 @@
         }
       }
 
+      connectedCallback() {
+        this.style.setProperty('opacity', '0');
+        super.connectedCallback();
+      }
+
       exitAnimation() {
-        let tl;
-        if (this.timeline) {
-          tl = this.timeline;
-        } else {
-          tl = new TimelineLite();
-          tl.to(this, .5, {"opacity": 0});
-          this.timeline = tl;
-        }
+        let tl = new TimelineLite();
+        tl.to(this, .5, {"opacity": "0"});
         return tl;
       }
 
       entryAnimation() {
+        let tl;
         if (this.timeline) {
-          this.timeline.play();
+          this.timeline.seek(0);
+          tl = this.timeline;
         } else {
-          const tl = new TimelineLite();
-          tl.from(this, .5, {"opacity": 0});
+          tl = new TimelineLite();
+          tl.to(this, 1, {"opacity": 1});
           this.timeline = tl;
-          tl.play();
         }
-      }
-
-      resetExitAnimation() {
-        this.timeline.pause(0);
+        return tl;
       }
     }
 

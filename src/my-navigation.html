@@ -13,10 +13,10 @@
         margin-right: -1.2em;
         --my-navigation-anchors-color: var(--app-primary-font-color);
       }
-      :host([page="working"]),
-      :host([page="writing"]) {
-        --my-navigation-anchors-color: var(--app-alt-font-color);
-      }
+      /*:host([page="working"]),*/
+      /*:host([page="writing"]) {*/
+        /*--my-navigation-anchors-color: var(--app-alt-font-color);*/
+      /*}*/
       a {
         font-weight: bold;
         text-transform: uppercase;
@@ -42,6 +42,7 @@
       <a name="writing" on-tap="handleClick" href="/writing">Writing</a>
       <a name="working" on-tap="handleClick" href="/working">Working</a>
     </iron-selector>
+
   </template>
 
   <script>

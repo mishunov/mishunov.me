@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="my-page.html">
 
 <link rel="import" href="content/speaking-content.html">
 
@@ -22,13 +22,9 @@
      * @customElement
      * @polymer
      */
-    class MySpeaking extends Polymer.Element {
+    class MySpeaking extends MyPage {
       static get is() {
         return 'my-speaking';
-      }
-
-      static get properties() {
-        return {};
       }
     }
 
