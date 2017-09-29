@@ -149,7 +149,7 @@
       }
 
       _characterIsDone(event) {
-        this.$.sectiontitle.tweenSectionsTitle();
+//        this.$.sectiontitle.tweenSectionsTitle();
       }
 
       /** This is run when we get *to* /home or when the get to a new page *from* home */
@@ -183,15 +183,15 @@
 //        const lineTween = new TweenLite({paused: true});
         const tl = new TimelineLite();
 
-        tl.to(nav, .3, {
+        tl.to(nav, .5, {
           "transform": "translateX(0px)",
           ease: Elastic.easeOut.config(1, 0.3)
         });
 //        tl
 //          .to(weightBlock, .3, {opacity: 1})
-//          .to(nav, 2, {x: 0, ease:Power1.easeOut})
-//          .staggerTo([wheel, wheelAxes], 2, {rotation: "+=720", ease:Power1.easeOut, transformOrigin:"center center"}, "0", "-=2")
-//          .from(weight, 2, {y: "-70%", ease:Power1.easeOut}, "-=2");
+//          .to(nav, 3, {x: 0, ease:Bounce.easeOut})
+//          .staggerTo([wheel, wheelAxes], 3, {rotation: "+=720", ease:Bounce.easeOut, transformOrigin:"center center"}, "0", "-=3")
+//          .from(weight, 3, {y: "-70%", ease:Bounce.easeOut}, "-=3");
 
         this.entryAnimation = tl;
         return tl;

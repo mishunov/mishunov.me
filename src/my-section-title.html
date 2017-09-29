@@ -127,9 +127,11 @@
         return title;
       }
 
-      tweenSectionsTitle() {
-        TweenLite.to(this, .3, {autoAlpha: 1});
-        TweenLite.to(this.$.title, 1, {text: this.__computeSectionTitle(this.page), ease:Power4.easeOut});
+      entryAnimation() {
+        let tl = new TimelineLite();
+        tl.to(this, .3, {autoAlpha: 1})
+          .to(this.$.title, 1, {text: this.__computeSectionTitle(this.page), ease:Power4.easeOut});
+        return tl;
       }
     }
 

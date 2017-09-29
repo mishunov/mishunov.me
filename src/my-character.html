@@ -159,11 +159,22 @@
           page: {
             type: String,
             reflectToAttribute: true,
-            observer: 'animateCharacter'
+//            observer: 'animateCharacter'
           },
           timeline: Object,
           selectedPage: Number
         };
+      }
+
+      handDrawing() {
+        console.log('handDrawing character');
+        let tl = new TimelineLite();
+        const img = this.shadowRoot.querySelector('picture img');
+        tl.from(img, 4, {opacity: 0});
+        this.timeline = tl;
+        this.removeAttribute('style');
+        this.style.setProperty('opacity', 1);
+        return tl;
       }
 
       _onEntryAnimationComplete() {
@@ -176,31 +187,54 @@
         });
       }
 
-      animateCharacter(newPage, oldPage) {
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          const contour = this.shadowRoot.getElementById(`${this.page}-contour`);
-          const img = this.shadowRoot.querySelector('picture img');
-          const swap = () => { this._onEntryAnimationComplete(); };
-
-          const pages = ['speaking', 'writing', 'working'];
-          this.selectedPage = pages.indexOf(this.page);
-
-          const contours = contour.querySelectorAll(`#${this.page}-contour path`);
-          let tl = new TimelineLite({
-            paused: true,
-            onComplete: swap,
-            autoRemoveChildren: true
-          });
-
-          tl.staggerFrom(contours, 1, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3)
-            .from(img, 1, {opacity: 0});
-
-          this.removeAttribute('style');
-          this.style.setProperty('opacity', 1);
-          this.timeline = tl;
-          tl.play();
+      animateIn() {
+        let tl = new TimelineLite({
+//          paused: true,
+          onComplete: () => { this._onEntryAnimationComplete(); },
+          autoRemoveChildren: true
         });
+        tl
+          .add(this.animateContour())
+          .add(this.animateChar());
+
+//        Polymer.RenderStatus.afterNextRender(this, () => {
+
+
+
+
+
+
+//          tl.staggerFrom(contours, 1, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3)
+//            .from(img, 1, {opacity: 0});
+
+//          this.removeAttribute('style');
+//          this.style.setProperty('opacity', 1);
+          this.timeline = tl;
+//          tl.play();
+//        });
+
+        return tl;
       }
+
+      animateContour() {
+        let tl = new TimelineLite();
+        const contour = this.shadowRoot.getElementById(`${this.page}-contour`);
+        const pages = ['speaking', 'writing', 'working'];
+        this.selectedPage = pages.indexOf(this.page);
+        const contours = contour.querySelectorAll(`#${this.page}-contour path`);
+
+        tl.staggerFrom(contours, 1, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3);
+        return tl;
+      }
+
+      animateChar() {
+        let tl = new TimelineLite();
+        const img = this.shadowRoot.querySelector('picture img');
+        tl.from(img, 1, {opacity: 0});
+        this.timeline = tl;
+        return tl;
+      }
+
     }
 
     window.customElements.define(MyCharacter.is, MyCharacter);

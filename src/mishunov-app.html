@@ -139,16 +139,16 @@
 
       _pageLoaded() {
         this._ensureLazyLoaded();
-        const curr = this.shadowRoot.querySelector('iron-pages').selected;
-        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
-        // Make sure to animate content into view only after the character:
-        if (curr !== 'home') {
-          const delay = this.$.header.shadowRoot.getElementById('character').timeline.totalDuration();
-          const contentTimeline = currPage.entryAnimation();
-          const tl = new TimelineLite();
-          tl.add(contentTimeline, `+=${delay}`);
-          tl.play();
-        }
+//        const curr = this.shadowRoot.querySelector('iron-pages').selected;
+//        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
+//        // Make sure to animate content into view only after the character:
+//        if (curr !== 'home') {
+//          const delay = this.$.header.shadowRoot.getElementById('character').timeline.totalDuration();
+//          const contentTimeline = currPage.entryAnimation();
+//          const tl = new TimelineLite();
+//          tl.add(contentTimeline, `+=${delay}`);
+//          tl.play();
+//        }
       }
 
       _ensureLazyLoaded() {
@@ -187,20 +187,60 @@
         }
       }
 
+      resetAnimations() {
+//        /*this.shadowRoot.getElementById('transition').resetAnimation();*/
+//        this.shadowRoot.getElementById('header').resetAnimation();
+      }
+
+      entryInnerPage() {
+        const animations = ['handDrawing'];
+        const transitionType = animations[Math.floor(Math.random() * animations.length)];
+        const transitionEl = this.shadowRoot.getElementById('transition');
+        const char = this.$.header.shadowRoot.getElementById('character');
+        transitionEl.canvas = char;
+        let tl = new TimelineLite({
+          onComplete: () => {
+            this.resetAnimations();
+          }
+        });
+
+        tl
+          .add(Polymer.Path.get(transitionEl, transitionType).call(transitionEl))
+          .add(Polymer.Path.get(char, transitionType).call(char), "-=5")
+          .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "-=4")
+          .add(this.$.header.shadowRoot.getElementById('sectiontitle').entryAnimation(), "-=2")
+          .add(this.shadowRoot.querySelector('iron-pages').selectedItem.entryAnimation(), "-=2");
+
+        char.removeAttribute('style');
+        char.style.setProperty('opacity', 1);
+
+        tl.play();
+      }
+
+      entryHomePage() {
+        let tl = new TimelineLite({
+          onComplete: () => {
+            this.resetAnimations();
+          }
+        });
+
+        tl.add(this.$.home.entryAnimation());
+
+        tl.play();
+      }
+
       navigateToAPage(requested, current) {
         window.history.pushState({}, null, '/' + requested);
-        const elInDom = this.shadowRoot.querySelector(`[name="${requested}"]`);
-//        const currentInDom = this.shadowRoot.querySelector(`[name="${current}"]`);
-        if (elInDom.shadowRoot) {
-          elInDom.entryAnimation();
-        }
-
         // `location-changed` – event to communicate to <app-location>
         window.dispatchEvent(new CustomEvent('location-changed'));
-//        currentInDom.resetExitAnimation();
-        this.shadowRoot.getElementById('transition').resetAnimation();
-        this.shadowRoot.getElementById('header').resetAnimation();
+        if (requested !== 'home') {
+          this.entryInnerPage();
+        } else {
+          this.entryHomePage();
+        }
       }
+
+      navigateFromAPage() {}
 
       _animateToHomeNavigation() {
           const headerTimeline = this.$.header.exitAnimation();

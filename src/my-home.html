@@ -167,25 +167,23 @@
     }
 
     entryAnimation() {
-      const tl = new TimelineLite({
-        paused: true
-      });
+      let tl = new TimelineLite();
       const intro = this.$.intro;
       const char = this.$.character;
-      const waves = this.$.waves;
+//      const waves = this.$.waves;
 
       if (this.entryTimeline) {
-        this.entryTimeline.play();
+        tl = this.entryTimeline;
       } else {
         tl.staggerFrom([intro, char], .3, {
           'y': '100%',
           'opacity': 0,
           ease: Power3.easeOut
         });
-        this.style.setProperty('opacity', 1);
+//        this.style.setProperty('opacity', 1);
         this.entryTimeline = tl;
-        tl.play();
       }
+      return tl;
     }
 
     exitAnimation() {
