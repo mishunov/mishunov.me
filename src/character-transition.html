@@ -261,9 +261,7 @@
         console.log('handDrawingExit transition');
         const drawingHand = this.shadowRoot.getElementById('hand-drawing-hand');
         let tl = new TimelineLite();
-        tl
-          .to(drawingHand, .3, {opacity: 0})
-          .to(drawingHand, .5, {y: "200%"}, "-=.3");
+        tl.to(drawingHand, .5, {opacity: 0, x: "200%"});
         return tl;
       }
 
@@ -294,16 +292,16 @@
           const particle = dustParticles[i];
           const data = particle.getBBox();
           let nested = new TimelineLite();
-          const durationTranslate = (Math.random() + 0.5) * 4;
+          const durationTranslate = (Math.random() + 0.5) * 3;
           nested
             .from(particle, 2, {autoAlpha: 0})
             .fromTo(particle, 1.5, {scale: 0, transformOrigin: "50% 50%", ease:Power0.easeNone}, {scale: 1.2, transformOrigin: "50% 50%", ease:Power0.easeNone}, "-=2")
-            .fromTo(particle, 5, {scale: 1.2, transformOrigin: "50% 50%", ease:Power0.easeNone}, {scale: 0, transformOrigin: "50% 50%", ease:Power0.easeNone})
+            .fromTo(particle, 4, {scale: 1.2, transformOrigin: "50% 50%", ease:Power0.easeNone}, {scale: 0, transformOrigin: "50% 50%", ease:Power0.easeNone})
             .from(particle, durationTranslate, {
               x:startX - data.x - (data.width/2),
               y:startY - data.y - (data.height/2),
-              ease: Power4.easeOut},"-=6")
-            .to(particle, 1, {autoAlpha: 0}, "-=2");
+              ease: Power4.easeOut},"-=4.5")
+            .to(particle, 2, {autoAlpha: 0}, "3.5");
           dustTimeline.add(nested, 0);
         }
 
@@ -316,7 +314,7 @@
           .from(drawingHand, .3, {opacity: 0})
           .from(drawingHand, .5, {y: "200%"}, "-=.3")
           .add(drawingTimeline)
-          .add(dustTimeline, "-=2.6");
+          .add(dustTimeline, "1");
 
         transitionStyle.style.setProperty('opacity', 1);
 

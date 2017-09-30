@@ -206,10 +206,10 @@
 
         tl
           .add(Polymer.Path.get(transitionEl, transitionType).call(transitionEl))
-          .add(Polymer.Path.get(char, transitionType).call(char), "-=7.4")
-          .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "-=4")
-          .add(this.$.header.shadowRoot.getElementById('sectiontitle').entryAnimation(), "-=2")
-          .add(this.shadowRoot.querySelector('iron-pages').selectedItem.entryAnimation());
+          .add(Polymer.Path.get(char, transitionType).call(char), "0.8")
+          .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "3.5")
+          .add(this.$.header.shadowRoot.getElementById('sectiontitle').entryAnimation(), "5")
+          .add(this.shadowRoot.querySelector('iron-pages').selectedItem.entryAnimation(), "-=1");
 
         char.removeAttribute('style');
         char.style.setProperty('opacity', 1);

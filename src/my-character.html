@@ -168,13 +168,6 @@
 
       handDrawing() {
         console.log('handDrawing character');
-//        let tl = new TimelineLite();
-//        const img = this.shadowRoot.querySelector('picture img');
-//        tl.from(img, 4, {opacity: 0});
-//        this.timeline = tl;
-//        this.removeAttribute('style');
-//        this.style.setProperty('opacity', 1);
-//        return tl;
         return this.animateIn();
       }
 
@@ -190,30 +183,13 @@
 
       animateIn() {
         let tl = new TimelineLite({
-//          paused: true,
           onComplete: () => { this._onEntryAnimationComplete(); },
           autoRemoveChildren: true
         });
         tl
           .add(this.animateContour())
-          .add(this.animateChar());
-
-//        Polymer.RenderStatus.afterNextRender(this, () => {
-
-
-
-
-
-
-//          tl.staggerFrom(contours, 1, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3)
-//            .from(img, 1, {opacity: 0});
-
-//          this.removeAttribute('style');
-//          this.style.setProperty('opacity', 1);
+          .add(this.animateChar(), "3");
           this.timeline = tl;
-//          tl.play();
-//        });
-
         return tl;
       }
 
@@ -224,14 +200,16 @@
         this.selectedPage = pages.indexOf(this.page);
         const contours = contour.querySelectorAll(`#${this.page}-contour path`);
 
-        tl.staggerFrom(contours, 1.5, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3);
+        tl
+          .staggerFrom(contours, 3, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3)
+          .staggerTo(contours, 0.2, {autoAlpha: 0, delay: 1});
         return tl;
       }
 
       animateChar() {
         let tl = new TimelineLite();
         const img = this.shadowRoot.querySelector('picture img');
-        tl.from(img, 2, {autoAlpha: 0});
+        tl.from(img, 1.2, {autoAlpha: 0, ease:Power1.easeIn});
         this.timeline = tl;
         return tl;
       }

@@ -12,17 +12,7 @@
       }
 
       static get properties() {
-        return {
-          pageTiming: {
-            type: Object,
-            value: function () {
-              return {
-                duration: 300,
-                fill: "forwards"
-              }
-            }
-          }
-        }
+        return {}
       }
 
       connectedCallback() {
@@ -32,7 +22,7 @@
 
       exitAnimation() {
         let tl = new TimelineLite();
-        tl.to(this, .5, {"opacity": "0"});
+        tl.to(this, .5, {autoAlpha: "0"});
         return tl;
       }
 
@@ -43,7 +33,7 @@
           tl = this.timeline;
         } else {
           tl = new TimelineLite();
-          tl.to(this, 1, {"opacity": 1});
+          tl.to(this, 1.5, {autoAlpha: 1});
           this.timeline = tl;
         }
         return tl;
