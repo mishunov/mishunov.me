@@ -154,15 +154,16 @@
 
       /** This is run when we get *to* /home or when the get to a new page *from* home */
       _pageIsSet(newPage, oldPage) {
-        if (newPage === 'home') {
-          const header = this.shadowRoot.getElementById('header');
+        if (newPage === 'home' && !oldPage) {
           const nav = this.shadowRoot.getElementById('nav');
+          nav.style.marginRight = "0";
 
-          const rectHeader = header.getBoundingClientRect();
+          const rectHeader = this.$.header.getBoundingClientRect();
           const rectNav = nav.getBoundingClientRect();
           const shift = (rectNav.left - rectHeader.left)/2;
+
           if (shift !== 0) {
-            nav.style.setProperty('transform', `translateX(${shift * -1}px)`);
+            nav.style.setProperty('transform', `translateX(-${shift}px)`);
           }
         }
       }
@@ -176,6 +177,7 @@
 
       entryAnimation() {
         const nav = this.shadowRoot.getElementById('nav');
+        const logo = this.shadowRoot.querySelector('[main-title] a');
 //        const weightBlock = this.shadowRoot.getElementById('block-weight');
 //        const wheel = weightBlock.getElementById('wheel');
 //        const wheelAxes = weightBlock.getElementById('wheel-axes');
@@ -183,73 +185,70 @@
 //        const lineTween = new TweenLite({paused: true});
         const tl = new TimelineLite();
 
-        tl.to(nav, .5, {
-          "transform": "translateX(0px)",
-          ease: Elastic.easeOut.config(1, 0.3)
-        });
+        tl
+          .to(logo, .5, {autoAlpha: 1})
+          .to(nav, .5, {x: 0, ease: Elastic.easeOut.config(1, 0.3)}, 0);
 //        tl
 //          .to(weightBlock, .3, {opacity: 1})
 //          .to(nav, 3, {x: 0, ease:Bounce.easeOut})
 //          .staggerTo([wheel, wheelAxes], 3, {rotation: "+=720", ease:Bounce.easeOut, transformOrigin:"center center"}, "0", "-=3")
 //          .from(weight, 3, {y: "-70%", ease:Bounce.easeOut}, "-=3");
 
-        this.entryAnimation = tl;
+//        this.entryAnimation = tl;
         return tl;
       }
 
       exitAnimation() {
         const tl = new TimelineLite();
         const nav = this.shadowRoot.getElementById('nav');
+
+        nav.removeAttribute('style');
+
         const logo = this.shadowRoot.querySelector('[main-title] a');
         const sectionTitle = this.shadowRoot.getElementById('sectiontitle');
         const character = this.shadowRoot.getElementById('character');
-        const rectHeader = this.getBoundingClientRect();
+
+        const rectHeader = this.$.header.getBoundingClientRect();
         const rectNav = nav.getBoundingClientRect();
-        const shift = (rectNav.left - rectHeader.left)/2;
+        const shift = (rectHeader.width - rectNav.width)/2;
 
-        tl.staggerTo([sectionTitle, character, logo], .3, {opacity: 0})
-          .to(nav, .3, {"x": (() => {
-            if (shift !== 0) {
-              return `${shift * -1}px`;
-            }
-          })(), ease: Power3.easeOut})
-          .to(nav, .3, {"--my-navigation-anchors-color": "#000"}, "-=.3")
-          .to(this, .3, {backgroundColor: 'transparent'}, "-=.3")
-          .to(this, 0, {backgroundImage: 'none'});
+
+        tl.staggerTo([sectionTitle, character, logo], .3, {autoAlpha: 0})
+          .to(nav, .5, {x: `-${shift}px`, ease: Power3.easeOut});
 
         return tl;
       }
 
-      betweenAnimation(type) {
-        let transition;
-        type = type||'';
-        switch(type) {
-          case "toHome":
-            transition = this.erase();
-            break;
-          default:
-            transition = this.handPush();
-            break;
-        }
-        return transition;
-      }
+//      betweenAnimation(type) {
+//        let transition;
+//        type = type||'';
+//        switch(type) {
+//          case "toHome":
+//            transition = this.erase();
+//            break;
+//          default:
+//            transition = this.handPush();
+//            break;
+//        }
+//        return transition;
+//      }
 
-      handPush() {
-        if(Polymer.Path.get(this, 'timeline.handPush')) {
-          this.timeline.handPush.seek(0);
-          return this.timeline.handPush;
-        }
-
-        let tl = new TimelineLite();
-        const character = this.shadowRoot.getElementById('character');
-        tl
-          .to(character, .5, {x: "-400%"})
-          .to(character, .5, {rotation: "+=1800"}, "-=0.5");
-
-        Polymer.Path.set(this, 'timeline.handPush', tl);
-
-        return tl;
-      }
+//      handPush() {
+//        if(Polymer.Path.get(this, 'timeline.handPush')) {
+//          this.timeline.handPush.seek(0);
+//          return this.timeline.handPush;
+//        }
+//
+//        let tl = new TimelineLite();
+//        const character = this.shadowRoot.getElementById('character');
+//        tl
+//          .to(character, .5, {x: "-400%"})
+//          .to(character, .5, {rotation: "+=1800"}, "-=0.5");
+//
+//        Polymer.Path.set(this, 'timeline.handPush', tl);
+//
+//        return tl;
+//      }
 
       resetAnimation() {
         const character = this.shadowRoot.getElementById('character');

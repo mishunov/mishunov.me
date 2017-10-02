@@ -113,6 +113,18 @@
           /*top: 75px;*/
           left: -58px;
         }
+        :host([page="writing"]) {
+          left: 0;
+        }
+      }
+
+      @media screen and (min-width: 900px) {
+        :host([page="speaking"]) {
+          left: 0;
+        }
+        :host([page="working"]) {
+          left: -18px;
+        }
       }
 
       @media screen and (min-width: 1024px) {
@@ -140,7 +152,7 @@
       <source srcset="/images/[[page]].png,
                         /images/[[page]]@2x.png 1.5x,
                         /images/[[page]]@2x.png 2x">
-      <img src="/images/[[page]].png" alt="">
+      <img src="/images/[[page]].png" alt="" on-load="_notifyLoad">
     </picture>
   </template>
 
@@ -166,30 +178,44 @@
         };
       }
 
+      _notifyLoad() {
+        this.dispatchEvent(new CustomEvent('character-loaded'));
+      }
+
       handDrawing() {
         console.log('handDrawing character');
-        return this.animateIn();
-      }
 
-      _onEntryAnimationComplete() {
-        this.dispatchEvent(new CustomEvent('finished-animation'));
-        Polymer.RenderStatus.afterNextRender(this, () => {
-          const contour = this.shadowRoot.getElementById(`${this.page}-contour`);
-          const img = this.shadowRoot.querySelector('picture img');
-          contour.setAttribute('data-used', true);
-          img.style.removeProperty('opacity');
-        });
-      }
+        if(Polymer.Path.get(this, 'timeline.handDrawing')) {
+          this.timeline.handDrawing.seek(0);
+          return this.timeline.handDrawing;
+        }
 
-      animateIn() {
         let tl = new TimelineLite({
-          onComplete: () => { this._onEntryAnimationComplete(); },
           autoRemoveChildren: true
         });
+
         tl
-          .add(this.animateContour())
-          .add(this.animateChar(), "3");
-          this.timeline = tl;
+          .add(this.animateContour(), 0)
+          .add(this.revealChar(), 3);
+
+        Polymer.Path.set(this, 'timeline.handDrawing', tl);
+        return tl;
+      }
+
+      handPush() {
+        if(Polymer.Path.get(this, 'timeline.handPush')) {
+          this.timeline.handPush.seek(0);
+          return this.timeline.handPush;
+        }
+
+        let tl = new TimelineLite();
+        const img = this.shadowRoot.querySelector('picture img');
+
+        tl
+          .set(img, {x: "0%", rotation: "0"})
+          .to(img, .5, {x: "-400%", rotation: "+=1800"});
+
+        Polymer.Path.set(this, 'timeline.handPush', tl);
         return tl;
       }
 
@@ -202,15 +228,24 @@
 
         tl
           .staggerFrom(contours, 3, {drawSVG: "0%",  ease: Power4.easeNone}, 0.3)
-          .staggerTo(contours, 0.2, {autoAlpha: 0, delay: 1});
+          .staggerTo(contours, 0.2, {autoAlpha: 0})
+          .staggerTo(contours, 0, {drawSVG: "0%", autoAlpha:"1"});
+
+        Polymer.Path.set(this, 'timeline.animateContour', tl);
+
         return tl;
       }
 
-      animateChar() {
+      revealChar() {
         let tl = new TimelineLite();
         const img = this.shadowRoot.querySelector('picture img');
-        tl.from(img, 1.2, {autoAlpha: 0, ease:Power1.easeIn});
-        this.timeline = tl;
+
+        tl
+          .set(img, {x: "0%", rotation: "0"})
+          .from(img, 1.2, {autoAlpha: 0, ease:Power1.easeIn}, 0);
+
+        Polymer.Path.set(this, 'timeline.revealChar', tl);
+
         return tl;
       }
 

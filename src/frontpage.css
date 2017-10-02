@@ -87,14 +87,6 @@ svg {
   height: 100%;
 }
 
-#mouth-end {
-  opacity: 0
-}
-
-#mouth-closed-shadow {
-  visibility: hidden
-}
-
 /* end prepare for the animations  */
 
 @media screen and (orientation: portrait) {

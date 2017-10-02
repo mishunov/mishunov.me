@@ -45,6 +45,10 @@
       :host([page="home"]) {
         padding-bottom: 0;
       }
+      /*iron-pages {*/
+        /*position: relative;*/
+        /*z-index: 2;*/
+      /*}*/
     </style>
 
     <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
@@ -117,9 +121,9 @@
       ready () {
         super.ready();
         this.addEventListener('dom-change', (e)=>this._domChange(e));
-        this.addEventListener('navigation-to-home-requested', (e)=>this._animateToHomeNavigation(e));
-        this.addEventListener('navigation-from-home-requested', (e)=>this._animateFromHomeNavigation(e));
-        this.addEventListener('navigation-between-pages-requested', (e)=>this._animateBetweenPagesNavigation(e));
+        this.addEventListener('navigation-to-home-requested', (e)=>this.exitInnerPageToHome(e));
+        this.addEventListener('navigation-from-home-requested', (e)=>this.exitHomePage(e));
+        this.addEventListener('navigation-between-pages-requested', (e)=>this.exitInnerPage(e));
       }
 
       _routePageChanged(page) {
@@ -129,26 +133,20 @@
       }
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        let resolvedPageUrl = this.resolveUrl(`my-${page}.html`);
-        Polymer.importHref(
-          resolvedPageUrl,
-          this._pageLoaded.bind(this),
-          this._showPage404.bind(this),
-          true);
+        if (page === 'home') {
+          let resolvedPageUrl = this.resolveUrl(`my-${page}.html`);
+          Polymer.importHref(
+              resolvedPageUrl,
+              this._pageLoaded.bind(this),
+              this._showPage404.bind(this),
+              true);
+        } else {
+          this._pageLoaded();
+        }
       }
 
       _pageLoaded() {
         this._ensureLazyLoaded();
-//        const curr = this.shadowRoot.querySelector('iron-pages').selected;
-//        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
-//        // Make sure to animate content into view only after the character:
-//        if (curr !== 'home') {
-//          const delay = this.$.header.shadowRoot.getElementById('character').timeline.totalDuration();
-//          const contentTimeline = currPage.entryAnimation();
-//          const tl = new TimelineLite();
-//          tl.add(contentTimeline, `+=${delay}`);
-//          tl.play();
-//        }
       }
 
       _ensureLazyLoaded() {
@@ -166,6 +164,11 @@
               const footer = this.$.footer;
               charTransition.id = 'transition';
               this.shadowRoot.insertBefore(charTransition, footer);
+
+              const curr = this.shadowRoot.querySelector('iron-pages').selected;
+              if (curr !== 'home') {
+                this.entryInnerPage();
+              }
             });
           });
         }
@@ -188,16 +191,32 @@
       }
 
       resetAnimations() {
-//        /*this.shadowRoot.getElementById('transition').resetAnimation();*/
-//        this.shadowRoot.getElementById('header').resetAnimation();
       }
 
-      entryInnerPage() {
+      _ensurePageAndAnimate() {
+        const tl = this.shadowRoot.querySelector('iron-pages').selectedItem.entryAnimation();
+        tl.play();
+      }
+
+      entryInnerPage(requested) {
         const animations = ['handDrawing'];
         const transitionType = animations[Math.floor(Math.random() * animations.length)];
         const transitionEl = this.shadowRoot.getElementById('transition');
-        const char = this.$.header.shadowRoot.getElementById('character');
-        transitionEl.canvas = char;
+        const char = (() => {
+          let el = this.$.header.shadowRoot.getElementById('character');
+          if (!el) {
+            Polymer.flush();
+            el = this.$.header.shadowRoot.getElementById('character');
+          }
+          return el;
+        })();
+
+        transitionEl.set('canvas', char);
+
+        char.addEventListener('character-loaded', function () {
+          transitionEl._setCanvasBorders(char);
+        });
+
         let tl = new TimelineLite({
           onComplete: () => {
             this.resetAnimations();
@@ -208,8 +227,8 @@
           .add(Polymer.Path.get(transitionEl, transitionType).call(transitionEl))
           .add(Polymer.Path.get(char, transitionType).call(char), "0.8")
           .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "3.5")
-          .add(this.$.header.shadowRoot.getElementById('sectiontitle').entryAnimation(), "5")
-          .add(this.shadowRoot.querySelector('iron-pages').selectedItem.entryAnimation(), "-=1");
+          .add(this.$.header.shadowRoot.getElementById('sectiontitle').entryAnimation(), "5");
+//          .call(this._ensurePageAndAnimate, null, this, "-=1");
 
         char.removeAttribute('style');
         char.style.setProperty('opacity', 1);
@@ -217,86 +236,14 @@
         tl.play();
       }
 
-      entryHomePage() {
-        let tl = new TimelineLite({
-          onComplete: () => {
-            this.resetAnimations();
-          }
-        });
-
-        tl.add(this.$.home.entryAnimation());
-
-        tl.play();
-      }
-
-      navigateToAPage(requested, current) {
-        window.history.pushState({}, null, '/' + requested);
-        // `location-changed` – event to communicate to <app-location>
-        window.dispatchEvent(new CustomEvent('location-changed'));
-        if (requested !== 'home') {
-          this.entryInnerPage();
-        } else {
-          this.entryHomePage();
-        }
-      }
-
-      navigateFromAPage() {}
-
-      _animateToHomeNavigation() {
-          const headerTimeline = this.$.header.exitAnimation();
-          const selectedPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
-          const pageTimeline = selectedPage.exitAnimation();
-
-          const tl = new TimelineLite({
-            onComplete: () => {
-              this.navigateToAPage('home', this.shadowRoot.querySelector('iron-pages').selected);
-            }
-          });
-
-          tl.add(headerTimeline)
-            .add(pageTimeline);
-          tl.play();
-      }
-
-      _animateFromHomeNavigation(e) {
-        const requested = e.detail.requested;
-        const headerTimeline = this.$.header.entryAnimation();
-        const pageTimeline = this.$.home.exitAnimation();
-
-        const charTransition = this.shadowRoot.getElementById('transition');
-        charTransition.canvas = this.$.home.shadowRoot.getElementById('character');
-
-        const charTimeline = charTransition.transition('fromHome');
-        const charExitTransition = charTransition.exitTransition();
-
-        const tl = new TimelineLite({
-          onComplete: () => {
-            this.navigateToAPage(requested, 'home');
-          }
-        });
-
-        tl
-          .add(charTimeline)
-          .add(pageTimeline)
-          .add(headerTimeline)
-          .add(charExitTransition, "-=.3");
-
-        tl.play();
-      }
-
-      _animateBetweenPagesNavigation(e) {
+      exitInnerPage(e) {
         const animations = ['handPush'];
         const transitionType = animations[Math.floor(Math.random() * animations.length)];
         const requested = e.detail.requested;
-        const currPage = this.shadowRoot.querySelector('iron-pages').selectedItem;
 
-        const charTransition = this.shadowRoot.getElementById('transition');
-        charTransition.canvas = this.$.header.shadowRoot.getElementById('character');
-
-        const charTimeline = charTransition.transition();
-        const charExitTransition = charTransition.exitTransition(transitionType);
-        const pageTimeline = currPage.exitAnimation();
-        const headerTimeline = this.$.header.betweenAnimation(transitionType);
+        const transitionEl = this.shadowRoot.getElementById('transition');
+        const char = this.$.header.shadowRoot.getElementById('character');
+        transitionEl.set('canvas', char);
 
         const tl = new TimelineLite({
           onComplete: () => {
@@ -305,12 +252,60 @@
         });
 
         tl
-          .add(charTimeline)
-          .add(headerTimeline, "-=.3")
-          .add(charExitTransition)
-          .add(pageTimeline, "-=.3");
+        .add(Polymer.Path.get(transitionEl, transitionType).call(transitionEl))
+        .add(Polymer.Path.get(char, transitionType).call(char), "1.1")
+        .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "-=0.2");
+//        .add(this.shadowRoot.querySelector('iron-pages').selectedItem.exitAnimation(), "-=0.2");
 
         tl.play();
+      }
+
+      exitInnerPageToHome(e) {
+        const tl = new TimelineLite({
+          onComplete: () => {
+            this.navigateToAPage('home', this.shadowRoot.querySelector('iron-pages').selected);
+          }
+        });
+
+        tl.add(this.$.header.exitAnimation());
+//          .add(this.shadowRoot.querySelector('iron-pages').selectedItem.exitAnimation(), 0);
+
+        tl.play();
+      }
+
+      exitHomePage(e) {
+        const animations = ['erase'];
+        const transitionType = animations[Math.floor(Math.random() * animations.length)];
+        const transitionEl = this.shadowRoot.getElementById('transition');
+        transitionEl.set('canvas', this.$.home.shadowRoot.getElementById('character'));
+
+        const tl = new TimelineLite({
+          onComplete: () => {
+            this.navigateToAPage(e.detail.requested, 'home');
+          }
+        });
+
+        tl
+          .add(this.$.home.beforeExitAnimation())
+          .add(Polymer.Path.get(transitionEl, transitionType).call(transitionEl))
+          .add(this.$.home.exitAnimation())
+          .add(this.$.header.entryAnimation())
+          .add(Polymer.Path.get(transitionEl, `${transitionType}Exit`).call(transitionEl), "-=.3");
+
+        tl.play();
+      }
+
+      navigateToAPage(requested) {
+        window.history.pushState({}, null, '/' + requested);
+        // `location-changed` – event to communicate to <app-location>
+        window.dispatchEvent(new CustomEvent('location-changed'));
+        if (requested !== 'home') {
+          this.entryInnerPage(requested);
+        } else {
+          if(this.$.home.entryAnimation) {
+            this.$.home.entryAnimation();
+          }
+        }
       }
 
     }
