@@ -8,7 +8,6 @@
     "bower.json"
   ],
   "extraDependencies": [
-    "app.yaml",
     "manifest.json",
     "bower_components/webcomponentsjs/*"
   ],
