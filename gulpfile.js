@@ -10,6 +10,7 @@
 
 'use strict';
 
+const gutil = require('gulp-util');
 const del = require('del');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
@@ -23,8 +24,9 @@ const imagemin = require('gulp-imagemin');
 // Additional plugins can be used to optimize your source files after splitting.
 // Before using each plugin, install with `npm i --save-dev <package-name>`
 const uglify = require('gulp-uglify');
-// const cssSlam = require('css-slam').gulp;
-// const htmlMinifier = require('gulp-html-minifier');
+const babel = require('gulp-babel');
+const cssSlam = require('css-slam').gulp;
+const htmlMinifier = require('gulp-html-minifier');
 
 // const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
@@ -72,9 +74,12 @@ function build() {
           // Uncomment these lines to add a few more example optimizations to your
           // source files, but these are not included by default. For installation, see
           // the require statements at the beginning.
-          // .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
-          // .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
-          // .pipe(gulpif(/\.html$/, htmlMinifier())) // Install gulp-html-minifier to use
+          .pipe(gulpif(/\.js$/, babel({presets: ['env']})))
+          .pipe(gulpif(/\.js$/, uglify()))
+          .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
+
+          .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
+          .pipe(gulpif(/\.html$/, htmlMinifier())) // Install gulp-html-minifier to use
 
           // Remember, you need to rejoin any split inline code when you're done.
           .pipe(sourcesStreamSplitter.rejoin());
