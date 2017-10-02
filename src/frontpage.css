@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'Oneday Condensed';
-  src: url('../font/OnedayCondensed-Regular.eot');
-  src: url('../font/OnedayCondensed-Regular.eot?#iefix') format('embedded-opentype'),
-  url('../font/OnedayCondensed-Regular.woff2') format('woff2'),
-  url('../font/OnedayCondensed-Regular.woff') format('woff'),
-  url('../font/OnedayCondensed-Regular.ttf') format('truetype');
+  src: url('/font/OnedayCondensed-Regular.eot');
+  src: url('/font/OnedayCondensed-Regular.eot?#iefix') format('embedded-opentype'),
+  url('/font/OnedayCondensed-Regular.woff2') format('woff2'),
+  url('/font/OnedayCondensed-Regular.woff') format('woff'),
+  url('/font/OnedayCondensed-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
